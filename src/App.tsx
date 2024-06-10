@@ -21,7 +21,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path='/support' element={<LoginAdmin />} /> 
-        <Route path='/gestion' element={< ListaUsuario />} /> 
+        <Route path='/support/gestion' element={< ListaUsuario />} /> 
         <Route path="/historico" element={<Historic />} />
         <Route path="/tarea" element={<Task />} />
         <Route path="/balance" element={<Balance />} />
