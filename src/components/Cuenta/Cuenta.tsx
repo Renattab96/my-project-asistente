@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import { Switch } from '@components/ui/Switch';
 import {Button}  from '@components/ui/Button';
-import {userIcon} from '../../assets/img/user-icon.png';
+const userIcon = '../../assets/img/user-icon';
 
 const Cuenta = () => {
   const [selectedImage, setSelectedImage] = useState(null);

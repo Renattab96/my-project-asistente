@@ -15,21 +15,21 @@ import Task from "./components/tarea/Tarea";
 
 function App() {
   return (
-    <>
-    
+    <div>
+      {/* <BrowserRouter> */}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path='/support' element={<LoginAdmin />} /> 
-        <Route path='/support/gestion' element={< ListaUsuario />} /> 
-        <Route path="/historico" element={<Historic/>} />
+        <Route path='/gestion' element={< ListaUsuario />} /> 
+        <Route path="/historico" element={<Historic />} />
         <Route path="/tarea" element={<Task />} />
         <Route path="/balance" element={<Balance />} />
         <Route path="/user_data/:id" element={<Cuenta />} />
       </Routes>
-  
-    </>
-   
+      {/* </BrowserRouter> */}
+     
+    </div>
   );
 }
 
