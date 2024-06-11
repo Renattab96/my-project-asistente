@@ -1,12 +1,9 @@
 
 import React, { useState } from 'react';
-// import React from 'react';
-import Navbar from '../Navbar/Navbar';
-// import Button from '../../../@/components/ui/Button';
+import Navbar from '@components/Navbar/Navbar';
 import HistoryTable from '../historico/HistoryTable';
 
-// import React, { useState } from 'react';
-// import HistoryTable from '../components/HistoryTable';
+
 
 const data = [
   {
@@ -68,14 +65,14 @@ const HistoryPage: React.FC = () => {
           type="text"
           placeholder="Tipo"
           value={tipo}
-          onChange={(e) => setTipo(e.target.value)}
+          // onChange={(e) => setTipo(e.target.value)}
           className="flex-1 border border-gray-300 rounded-md p-2"
         />
         <input
           type="text"
           placeholder="Estado"
           value={estado}
-          onChange={(e) => setEstado(e.target.value)}
+          // onChange={(e) => setEstado(e.target.value)}
           className="flex-1 border border-gray-300 rounded-md p-2"
         />
         <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded-md">

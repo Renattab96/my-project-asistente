@@ -18,7 +18,7 @@ const LoginAdmin = () => {
     <div className="flex flex-col h-screen justify-between">
       <header className="p-4 bg-white shadow-md flex justify-between items-center">
         <h1 className="text-2xl font-bold">ASISTENTE ONLINE</h1>
-        <Link to="/" className="text-lg">Accede a tu Asistente Online</Link>
+        <Link to="/" className="text-lg">Sitio Oficial </Link>
       </header>
       <main className="flex-grow flex items-center justify-center bg-blue-200">
         <div className="w-full max-w-md p-8 space-y-6 bg-gray-100 rounded-lg shadow-lg">
