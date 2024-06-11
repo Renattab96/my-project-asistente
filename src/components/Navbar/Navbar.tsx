@@ -4,6 +4,7 @@ import { FaSignOutAlt,FaPager,FaTasks } from 'react-icons/fa';
 
 import { RiAccountBoxLine } from "react-icons/ri";
 import { MdOutlineHistoryEdu } from "react-icons/md";
+import logo from '../../assets/img/logo-asistente.ico';
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,6 +18,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
+          <img src={logo} className="h-15 w-10 mr-3 " alt="Asistente Logo" /> {/* Agrega tu logo aquí */}
             <Link to="/" className="text-xl font-bold">ASISTENTE ONLINE</Link>
           </div>
           <div className="hidden md:flex md:space-x-8 md:ml-10">
