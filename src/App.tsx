@@ -9,6 +9,7 @@ import Register from "./components/registro/Register";
 import Task from "./components/tarea/Tarea";
 import LoginAdmin from "./components/LoginAdmin/loginAdmin" ;
 import AdminUserTable from "./components/ListaUsuarios/AdminUserTable";
+import DetalleAdmin from "@components/DetalleAdmin/DetalleAdmin";
 
 
 
@@ -26,6 +27,7 @@ function App() {
         <Route path="/user_data/:id" element={<Cuenta />} />
          <Route path='/support' element={<LoginAdmin />} />  
         <Route path='/support/gestion' element={< AdminUserTable />} />   
+        <Route path="/support/user_data/:id" element={<DetalleAdmin />} />
       </Routes>
       {/* </BrowserRouter> */}
      

@@ -39,9 +39,9 @@ const NavbarAdmin: React.FC = () => {
           </div>
           <div className="hidden md:flex md:space-x-8 md:ml-10">
             <Link 
-              onClick={notify} 
-              to={'#'} 
-              className={`${isActive('/cuenta')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
+              // onClick={notify} 
+              to={'/support/user_data/:id'} 
+              className={`${isActive('/support/user_data/:id')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
             >
               <RiAccountBoxLine className="mr-1" /> CUENTA
             </Link>
@@ -82,13 +82,13 @@ const NavbarAdmin: React.FC = () => {
       </div>
       <div className={`${menuOpen ? 'block' : 'hidden'} md:hidden`} id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link 
-            onClick={notify} 
-            to={'#'} 
-            className={`${isActive('/cuenta')} hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center`}
-          >
-            <RiAccountBoxLine className="mr-1" /> CUENTA
-          </Link>
+        <Link 
+              // onClick={notify} 
+              to={'/support/user_data/:id'} 
+              className={`${isActive('/support/user_data/:id')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
+            >
+              <RiAccountBoxLine className="mr-1" /> CUENTA
+        </Link>
           <Link 
             to={"/support/gestion"} 
             className={`${isActive('/support/gestion')} hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center`}

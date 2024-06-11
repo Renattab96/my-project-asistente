@@ -1,0 +1,35 @@
+
+.cuenta-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-image-container {
+  text-align: center;
+}
+
+.profile-details-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit-image {
+  display: block;
+  margin-top: 10px;
+}
+
+.btn-submit {
+  width: 100%;
+  background-color: #ff6600;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #cc5200;
+}

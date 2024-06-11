@@ -72,9 +72,9 @@ const AdminUserTable: React.FC = () => {
     },
   ]);
 
-  // const toggleMenu = () => {
-  //   setMenuOpen(!menuOpen);
-  // };
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
   const notify = () => {
     toast.info('Funcionalidad en desarrollo', {
@@ -88,14 +88,14 @@ const AdminUserTable: React.FC = () => {
     });
   };
 
-  // const handleDelete = (userId: string) => {
-  //   setUsers(users.filter(user => user.id !== userId));
-  // };
+  const handleDelete = (userId: string) => {
+    setUsers(users.filter(user => user.id !== userId));
+  };
 
-  // const handleResetPassword = (userId: string) => {
-  //   console.log('Resetting password for user with ID:', userId);
-  //   // Lógica para restablecer la contraseña
-  // };
+  const handleResetPassword = (userId: string) => {
+    console.log('Resetting password for user with ID:', userId);
+    // Lógica para restablecer la contraseña
+  };
 
   return (
     <div>
@@ -113,7 +113,7 @@ const AdminUserTable: React.FC = () => {
             placeholder="CODIGO"
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md"
           />
-          <button   onClick={notify} className="px-4 py-2 bg-blue-500 text-white rounded-md">BUSCAR</button>
+          <button   onClick='/support/cuenta/:id' className="px-4 py-2 bg-blue-500 text-white rounded-md">BUSCAR</button>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
@@ -146,7 +146,7 @@ const AdminUserTable: React.FC = () => {
                       <div className="flex space-x-2">
                         <button
                           className="px-2 py-1 text-sm bg-red-500 text-white rounded-md"
-                          // onClick={() => handleDelete(user.id)}
+                          // onClick={('') => handleDelete(user.id)}
                           onClick={notify}
                         >
                           <FaTrashAlt />
