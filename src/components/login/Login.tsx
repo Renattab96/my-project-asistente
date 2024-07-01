@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Card from '@components/ui//Card';
 import CardContent from '@components/ui//CardContent';
 import CardHeader from '@components/ui/CardHeader';
@@ -12,14 +13,56 @@ import { Switch } from '@components/ui/Switch';
 // import { Alert, AlertDescription, AlertTitle } from "../../../@/components/ui/alert"
 
 const Login: React.FC = () => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica para manejar el login
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+
+      // Guardar el token en el almacenamiento local
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Redireccionar al usuario a la página principal o al dashboard
+      navigate('/tarea');
+
+      // Mostrar un mensaje de éxito
+      toast.success('Inicio de sesión exitoso!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      toast.error('Error al iniciar sesión. Por favor, verifica tus credenciales.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
+
+
+  // const handleLogin = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // Lógica para manejar el login
+  // };
 
   const notify = () => {
     toast.info('Funcionalidad en desarrollo', {
@@ -73,18 +116,20 @@ const Login: React.FC = () => {
                 Login
               </Button>
             </form>
+            {/* Link de Acceso a seccion de Soporte  */}
             <div className="mt-4 text-center">
               <Link to="/register" className="text-sm text-indigo-600 hover:text-indigo-500">
-                No posee una cuenta? Crea una Cuenta
+              <p className="text-sm font-normal text-blue-900 mb-8 underline">No posee una cuenta? Crea una Cuenta</p> 
               </Link>
             </div>
             <div className="mt-4 flex justify-between text-sm text-gray-600">
               <Link onClick={notify} to="#" className="hover:text-gray-900">
-               Cambio de clave
+              <p className="text-sm font-normal text-blue-900 mb-8 underline">Cambio de clave</p>
               </Link>
               <Link to="/support" className="hover:text-gray-900">
-                Soporte
+              <p className="text-sm font-normal text-blue-900 mb-8 underline"> Soporte</p>
               </Link>
+            
             </div>
           </CardContent>
         </Card>

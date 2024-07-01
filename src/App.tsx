@@ -1,4 +1,5 @@
-import React from "react";
+
+import cors from 'cors'; 
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Login from "./components/login/Login";
@@ -15,6 +16,7 @@ import DetalleAdmin from "@components/DetalleAdmin/DetalleAdmin";
 
 
 function App() {
+
   return (
     <div>
       {/* <BrowserRouter> */}

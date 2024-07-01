@@ -1,128 +1,165 @@
-// import React, { useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from "react-router-dom";
-// import logintres from '../../assets/img/nanduti-login.jpg';
-import imgRegister from '../../assets/img/img-register.jpg';
-// import axios from 'axios'
-// import {useNavigate} from 'react-router-dom'
+import imgRegister from "../../assets/img/img-register.jpg";
+import axios from 'axios'
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
-  //   const [nombre,setNombre] = useState('')
-  //   const [apellido,setapellido]=useState('')
-  //   const [email,setEmail] = useState('')
-  //   const [password,setPassword] = useState('')
-  //   const [confirmPassword,setConfirmPassword] = useState('')
-  //   //  const [error, setError]= useState('');
 
-  //   const navigate = useNavigate()
-
-  //   const submitHandler = (e)=>{
-  //       e.preventDefault()
-  //       axios.post('http://localhost:8000/api/registro', {
-  //           nombre,apellido, email, password, confirmPassword
-  //       // })
-  //       }, {withCredentials:true})
-  //       .then((res)=>{
-  //           navigate('/')
-  //           return res.status(200)
-  //           // console.log(res)
-  //           // navigate('/sign_in')
-
-  //       }).catch((err)=>{
-  //           // console.log(err)
-  //           return err.status(400)
-  //       })
-  //   }
+    const [username, setUsername] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmpassword, setConfirmpassword] = useState('');
+    const navigate = useNavigate();
+  
+    const handleRegister = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/register', {
+          username,
+          lastname,
+          email,
+          password,
+          confirmpassword,
+        });
+  
+        toast.success('Registro exitoso!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+  
+        navigate('/');
+  
+      } catch (error) {
+        console.error('Error al registrar:', error);
+        toast.error('Error al registrar. Por favor, verifica tus datos.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      <div className="hidden lg:flex w-full lg:w-1/2 justify-around items-center border-2">
-        <img
-          src={imgRegister}
-          className="w-full h-full object-cover"
-          alt="nanduti-login"
-        />
-      </div>
-      <div className="flex w-full lg:w-1/2 justify-center items-center bg-white p-6 space-y-8">
-        <div className="max-w-md w-full">
-          <form
-            className="bg-grey rounded-md"
-            // onSubmit={submitHandler}
-          >
-            <div className="bg-white p-4 px-4 md:p-8 mb-6">
-              <h1 className="text-blue-900 font-bold text-3xl mb-3">Crea una cuenta</h1>
-              
-              <div className="grid gap-4 gap-y-2 text-sm grid-cols-1">
-                <div>
-                  <label htmlFor="full_name" className="text-2xl text-blue-900">Nombre/s</label>
-                  <input
-                    type="text"
-                    name="full_name"
-                    id="full_name"
-                    className="h-14 border mt-1 rounded px-4 w-full bg-gray-50 border-blue-900 placeholder-blue-900 rounded-2xl"
-                    placeholder="Ingrese su nombre"
-                    // onChange={(e)=>setNombre(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="full_name" className="text-2xl text-blue-900">Apellido/s</label>
-                  <input
-                    type="text"
-                    name="full_name"
-                    id="full_name"
-                    className="h-14 border mt-1 rounded px-4 w-full bg-gray-50 border-blue-900 placeholder-blue-900 rounded-2xl"
-                    placeholder="Ingrese su Apellido"
-                    // onChange={(e)=>setapellido(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="text-2xl text-blue-900">Email</label>
-                  <input
-                    type="text"
-                    name="email"
-                    id="email"
-                    className="h-14 border mt-1 rounded px-4 w-full bg-gray-50 border-blue-900 placeholder-blue-900 rounded-2xl"
-                    placeholder="email@domain.com"
-                    // onChange={(e)=>setEmail(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password" className="text-2xl text-blue-900">contraseña</label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    className="h-14 border mt-1 rounded px-4 w-full bg-gray-50 border-blue-900 placeholder-blue-900 rounded-2xl"
-                    placeholder="contraseña"
-                    // onChange={(e)=>setPassword(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="confirm_password" className="text-2xl text-blue-900">Repite contraseña</label>
-                  <input
-                    type="password"
-                    name="confirm_password"
-                    id="confirm_password"
-                    className="h-14 border mt-1 rounded px-4 w-full bg-gray-50 border-blue-900 placeholder-blue-900 rounded-2xl"
-                    placeholder="ingrese nuevamente la contraseña"
-                    // onChange={(e)=>setConfirmPassword(e.target.value)}
-                  />
-                </div>
-                <div className="text-right">
-                  <button className="block w-full bg-orange-600 mt-5 py-3 rounded-2xl hover:bg-orange-700 hover:-translate-y-1 transition-all duration-500 text-white text-2xl font-semibold mb-2">
-                    Registrate
-                  </button>
-                </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto">
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-white">
+          <img
+            src={imgRegister}
+            className="w-full h-full object-cover"
+            alt="nanduti-login"
+          />
+        </div>
+        <div className="w-full md:w-1/2 bg-white p-8 md:p-12 shadow-lg rounded-lg flex items-center justify-center">
+          <div className="w-full max-w-md">
+            <h2 className="text-3xl font-bold mb-6">Crea una cuenta</h2>
+            <form
+            onSubmit={handleRegister}
+            >
+              <div className="mb-4">
+                <label htmlFor="nombre" className="block text-gray-700 text-lg">
+                  Nombre/s
+                </label>
+                <input
+                  type="text"
+                  name="nombre"
+                  id="nombre"
+                  value={username}
+                  onChange={(e)=>setUsername(e.target.value)}               
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                />
               </div>
-            </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="apellido"
+                  className="block text-gray-700 text-lg"
+                >
+                  Apellido/s
+                </label>
+                <input
+                  type="text"
+                  name="apellido"
+                  id="apellido"
+                  value={lastname}
+                  onChange={(e)=>setLastname(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-gray-700 text-lg">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={email}
+                  onChange={(e)=>setEmail(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="password"
+                  className="block text-gray-700 text-lg"
+                >
+                  Contraseña
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-gray-700 text-lg"
+                >
+                  Repite contraseña
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  value={confirmpassword}
+                  onChange={(e)=>setConfirmpassword(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition duration-300 text-lg"
+              >
+                Crear cuenta
+              </button>
+            </form>
             <div className="mt-4 text-center">
               <Link to="/">
-                <p className="text-sm font-normal text-blue-900 mb-8">Inicia Sesion</p>
+                <p className="text-lg font-normal text-blue-900 mb-8 underline">
+                  Inicia Sesión
+                </p>
               </Link>
             </div>
-          </form>
-        
+          </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
