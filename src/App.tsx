@@ -1,5 +1,5 @@
-
-import cors from 'cors'; 
+// 
+// import cors from 'cors'; 
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Login from "./components/login/Login";
@@ -26,8 +26,8 @@ function App() {
         <Route path="/historico" element={<HistoryPage/>} />
         <Route path="/tarea" element={<Task />} />
         <Route path="/balance" element={<Balance />} />
-        <Route path="/user_data/:id" element={<Cuenta />} />
-         <Route path='/support' element={<LoginAdmin />} />  
+        <Route path="/cuenta/:id" element={<Cuenta />} />
+        <Route path='/support' element={<LoginAdmin />} />  
         <Route path='/support/gestion' element={< AdminUserTable />} />   
         <Route path="/support/user_data/:id" element={<DetalleAdmin />} />
       </Routes>

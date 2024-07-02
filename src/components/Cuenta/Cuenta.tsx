@@ -1,16 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import Navbar from "../Navbar/Navbar";
 import { Switch } from "@components/ui/Switch";
 import { Button } from "@components/ui/Button";
-import userIcon from  "../../assets/img/user-icon.png";
+import userIcon from "../../assets/img/user-icon.png";
+import axios from "axios";
+
+
+interface User {
+  _id: string;
+  username: string;
+  lastname: string;
+  email: string;
+  password: string;
+  confirmpassword: string;
+  profilePicture?: string;
+  notificationsEnabled: boolean;
+  role: string;
+  loginAttempts: number;
+  lockUntil: number;
+  deviceToken?: string;
+  cargo?: string;
+  telefono?: string;
+  sueldo_inicial?: number;
+}
 
 const Cuenta = () => {
+  const { id } = useParams<{ id: string }>();
+  const [user, setUser] = useState<User | null>(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  // const [isSwitchOn, setIsSwitchOn] = useState(false);
 
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedImage(URL.createObjectURL(e.target.files[0]));
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/users/${id}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error al obtener el usuario:", error);
+      }
+    };
+  
+    fetchUser();
+  }, [id]);
+
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(event.target.files[0]);
     }
   };
 
@@ -18,154 +59,94 @@ const Cuenta = () => {
     <>
       <Navbar />
       <div className="container mx-auto my-10 p-5">
-        <h1 className="text-3xl font-bold mb-6 border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">
-          Datos de la Cuenta
-        </h1>
-        <div className="flex flex-wrap -mx-2">
-          <div className="w-full md:w-1/2 px-2 mb-4 md:mb-0">
-            <div className="flex flex-col items-center justify-center mt-10 mx-5 lg:mx-20">
-              <h2 className="text-2xl font-semibold mb-4">Hola. Test </h2>
-              <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-                <div className="flex items-center justify-center mb-6">
-                  <img
-                    className="h-full w-full rounded-full"
-                    src={selectedImage ? selectedImage : userIcon}
-                    alt="Avatar"
-                  />
-                </div>
-                <div className="mb-4 text-left">
-                  <h3 className="text-xl font-bold">Datos Personales</h3>
-                  <p>
-                    <strong>Nombre:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Apellido:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Nro. Teléfono:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Correo Electrónico:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Cargo:</strong> Test
-                  </p>
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  id="upload-image"
-                  onChange={handleImageChange}
+      <h1 className="text-3xl font-bold mb-6 border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">
+        Datos de la Cuenta
+      </h1>
+      <div className="flex -mx-2">
+        <div className="w-1/2 px-2">
+          <div className="flex flex-col items-center justify-center mx-5 lg:mx-10">
+            <h2 className="text-2xl font-semibold mb-4">Hola, {user ? user.username : 'Cargando...'}</h2>
+            <div className="bg-white shadow-md rounded-lg p-6 w-full">
+              <div className="flex items-center justify-center mb-6">
+                <img
+                  className="h-full w-full rounded-full"
+                  src={selectedImage ? selectedImage.toString() : user?.profilePicture || userIcon}
+                  alt="Avatar"
                 />
-                <Button
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                  onClick={() =>
-                    document.getElementById("upload-image").click()
-                  }
-                >
-                  Editar Foto
-                </Button>
               </div>
-            </div>
-          </div>
-          <div className="w-full md:w-1/2 px-2">
-            <div className="flex flex-col items-center mt-10 mx-5 lg:mx-20">
-              <section className="shadow-2xl w-full p-6 bg-white rounded-md text-gray-700">
-                <div className="mb-4 text-left">
-                  <h4 className="text-xl font-bold">Datos Personales</h4>
-                  <p>
-                    <strong>Nombre:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Apellido:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Nro. Teléfono:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Correo Electrónico:</strong> Test
-                  </p>
-                  <p>
-                    <strong>Cargo:</strong> Test
-                  </p>
-                </div>
-                <div className="mb-4 text-left">
-                  <h4 className="text-xl font-bold">Datos Adicionales</h4>
-                </div>
-                <form>
-                  <div className="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2">
-                    <div>
-                      <label className="text-xl text-gray-700" htmlFor="cargo">
-                        Cargo
-                      </label>
-                      <input
-                        id="cargo"
-                        type="text"
-                        className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="text-xl text-gray-700"
-                        htmlFor="ingreso"
-                      >
-                        Ingreso
-                      </label>
-                      <input
-                        id="ingreso"
-                        type="text"
-                        className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="text-xl text-gray-700"
-                        htmlFor="emailAddress"
-                      >
-                        Email
-                      </label>
-                      <input
-                        id="emailAddress"
-                        type="email"
-                        className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xl text-blue-900" htmlFor="number">
-                        Nro de Teléfono
-                      </label>
-                      <input
-                        id="number"
-                        type="number"
-                        className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Notificación
-                      </label>
-                      <div className="flex items-center mt-2">
-                      <Switch checked={isSwitchOn} onCheckedChange={setIsSwitchOn} />
-                        <label className="ml-2 block text-sm text-gray-900">
-                          Habilitar Mensajería
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex justify-end mt-6">
-                    <button className="px-8 py-3 leading-5 text-white text-2xl transition-colors duration-200 transform bg-orange-500 rounded-md hover:bg-orange-700 focus:outline-none focus:bg-gray-600">
-                      Guardar
-                    </button>
-                  </div>
-                </form>
-              </section>
+              <div className="mb-4 text-left">
+                <h3 className="text-xl font-bold">Datos Personales</h3>
+                <p>
+                  <strong>Nombre:</strong> {user ? user.username : 'Cargando...'}
+                </p>
+                <p>
+                  <strong>Apellido:</strong> {user ? user.lastname : 'Cargando...'}
+                </p>
+                <p>
+                  <strong>Nro. Teléfono:</strong> {user ? user.telefono || 'No disponible' : 'Cargando...'}
+                </p>
+                <p>
+                  <strong>Correo Electrónico:</strong> {user ? user.email : 'Cargando...'}
+                </p>
+                <p>
+                  <strong>Cargo:</strong> {user ? user.cargo || 'No disponible' : 'Cargando...'}
+                </p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                id="upload-image"
+                onChange={handleImageChange}
+              />
+              <Button
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                onClick={() =>
+                  document.getElementById("upload-image")!.click()
+                }
+              >
+                Editar Foto
+              </Button>
             </div>
           </div>
         </div>
+        <div className="w-1/2 px-2">
+          <div className="bg-white shadow-md rounded-lg p-6 w-full">
+            <h3 className="text-xl font-bold mb-4">Datos Adicionales</h3>
+            <div className="mb-4">
+              <label className="block text-gray-700">Cargo</label>
+              <input className="w-full border-2 rounded p-2" type="text" placeholder="Cargo" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Ingreso</label>
+              <input className="w-full border-2 rounded p-2" type="text" placeholder="Ingreso" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Email</label>
+              <input className="w-full border-2 rounded p-2" type="email" placeholder="Email" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Nro de Teléfono</label>
+              <input className="w-full border-2 rounded p-2" type="text" placeholder="Nro de Teléfono" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Notificación</label>
+              <div className="flex items-center">
+              {/* <Swiitch></Swiitch>  <input type="checkbox" className="mr-2" /> */}
+                {/* <span>Habilitar Mensajería</span> */}
+              </div>
+            </div>
+            <Button className="w-full bg-orange-500 text-white rounded hover:bg-orange-700">
+              Guardar
+            </Button>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
+      </>
   );
 };
 
 export default Cuenta;
+
+
