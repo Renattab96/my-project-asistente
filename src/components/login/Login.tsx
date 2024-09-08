@@ -109,8 +109,8 @@ const Login: React.FC = () => {
                 />
               </div>
               <div className="mb-4 flex items-center">
-                <Switch/>
-                <span className="ml-2 text-sm text-gray-600">Remember Me</span>
+                {/* <Switch/>
+                <span className="ml-2 text-sm text-gray-600">Remember Me</span> */}
               </div>
               <Button className="w-full bg-gradient-to-r from-orange-400 to-red-500 text-white py-2 rounded-md shadow-md hover:from-orange-500 hover:to-red-600">
                 Login
@@ -123,9 +123,9 @@ const Login: React.FC = () => {
               </Link>
             </div>
             <div className="mt-4 flex justify-between text-sm text-gray-600">
-              <Link onClick={notify} to="#" className="hover:text-gray-900">
+              {/* <Link onClick={notify} to="#" className="hover:text-gray-900">
               <p className="text-sm font-normal text-blue-900 mb-8 underline">Cambio de clave</p>
-              </Link>
+              </Link> */}
               <Link to="/support" className="hover:text-gray-900">
               <p className="text-sm font-normal text-blue-900 mb-8 underline"> Soporte</p>
               </Link>

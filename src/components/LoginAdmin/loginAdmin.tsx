@@ -1,8 +1,56 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 
 const LoginAdmin = () => {
+
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleLoginAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+
+      // Guardar el token en el almacenamiento local
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Redireccionar al usuario a la página principal o al dashboard
+      navigate('/support/gestion');
+
+      // Mostrar un mensaje de éxito
+      toast.success('Inicio de sesión exitoso!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      toast.error('Error al iniciar sesión. Por favor, verifica tus credenciales.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
+
     const notify = () => {
         toast.info('Funcionalidad en desarrollo', {
           position: "top-right",
@@ -14,6 +62,9 @@ const LoginAdmin = () => {
           progress: undefined,
         });
       };
+
+
+
   return (
     <div className="flex flex-col h-screen justify-between">
       <header className="p-4 bg-white shadow-md flex justify-between items-center">
@@ -23,21 +74,23 @@ const LoginAdmin = () => {
       <main className="flex-grow flex items-center justify-center bg-blue-200">
         <div className="w-full max-w-md p-8 space-y-6 bg-gray-100 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-center text-blue-900">Login</h2>
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleLoginAdmin}>
             <div>
-              <label htmlFor="email" className="block text-lg font-medium text-blue-900">
+              <label htmlFor="email" className="block text-lg font-medium text-blue-900" >
                 Email
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 required
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-lg font-medium text-blue-900">
+              <label htmlFor="password" className="block text-lg font-medium text-blue-900" >
                 Password
               </label>
               <div className="relative">
@@ -45,6 +98,8 @@ const LoginAdmin = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
