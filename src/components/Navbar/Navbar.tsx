@@ -28,9 +28,9 @@ const Navbar: React.FC = () => {
           <Link to="/historico" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center">
           <MdOutlineHistoryEdu className="mr-1" /> HISTORICO
           </Link>
-          <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
+          {/* <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
             <FaPager className='mr-1'/>GASTOS
-          </Link>
+          </Link> */}
           <Link to={'/tarea'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
           <FaTasks className='mr-1'/>TAREA
           </Link>
@@ -68,9 +68,9 @@ const Navbar: React.FC = () => {
           <Link to="/historico" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
           <MdOutlineHistoryEdu className="mr-1" /> HISTORICO
           </Link>
-          <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
+          {/* <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
             <FaPager className='mr-1'/>GASTOS
-          </Link>
+          </Link> */}
           <Link to={'/tarea'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
           <FaTasks className='mr-1'/>TAREA
           </Link>

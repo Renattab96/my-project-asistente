@@ -12,6 +12,7 @@ interface IUser {
     loginAttempts: number;
     lockUntil: number;
     deviceToken?: string;
+    tasks: Schema.Types.ObjectId[];
 }
 
 const UserSchema = new Schema<IUser>({
@@ -26,6 +27,7 @@ const UserSchema = new Schema<IUser>({
     loginAttempts: { type: Number, required: true, default: 0 },
     lockUntil: { type: Number },
     deviceToken: { type: String },
+    tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }] 
 });
 
 UserSchema.virtual('isLocked').get(function () {

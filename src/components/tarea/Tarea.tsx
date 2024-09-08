@@ -1,71 +1,70 @@
-// import React, { useState, useEffect } from 'react';
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import Navbar from "../Navbar/Navbar";
-// import axios from 'axios';
-// import moment from 'moment';
-// import BtnTareaProgress from './BtnTareaProgress';
-// import BtnTareaCompleta from './BtnTareaCompleta';
-// import BtnTareaEliminada from './BtnTareaEliminada';
+import { ITask } from '../../Interfaces/Itask';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import axiosInstance from 'src/api/axiosInstance';
 
 const Task = () => {
-  // // Variables de estado
-  // const [accion, setAccion] = useState('');
-  // const [status, setStatus] = useState('uno');
-  // const [fechainicio, setinicio] = useState('');
-  // const [fechavencimiento, setFechavencimiento] = useState('');
-  // const [claseTarea, settipotarea] = useState('');
-  // const [hora, sethora] = useState('');
-  // const [descripcion, setDescripcion] = useState(''); // Nueva variable de estado para el textarea
-  // // const [projects, setProjects] = useState([]);
-
-  // const fetchTareas = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8000/api/tareas');
-  //     setProjects(response.data);
-  //   } catch (error) {
-  //     console.error('Error al obtener las tareas:', error);
-  //   }
-  // };
-
-  // const addProyecto = (e) => {
-  //   e.preventDefault();
-  //   const nuevaTarea = {
-  //     accion,           // Usar el valor del estado
-  //     fechainicio,      // Usar el valor del estado
-  //     fechavencimiento, // Usar el valor del estado
-  //     status,           // Usar el valor del estado
-  //     claseTarea,       // Usar el valor del estado
-  //     hora ,        // Usar el valor del estado
-  //     descripcion       // Usar el valor del estado
-  //   };
-  //   axios.post(`http://localhost:8000/api/creartarea`, nuevaTarea)
-  //     .then((res) => {
-  //       console.log(res);
-  //       fetchTareas(); // Llamar a fetchTareas para actualizar la lista de tareas después de crear una nueva tarea
-  //     }).catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // useEffect(() => {
-  //   fetchTareas();
-  // }, []);
-
-
-
-
   const [isPendienteOpen, setIsPendienteOpen] = useState(false);
   const [isEnCursoOpen, setIsEnCursoOpen] = useState(false);
   const [isFinalizadaOpen, setIsFinalizadaOpen] = useState(false);
+
+  const [tasks, setTasks] = useState<ITask[]>([]);
+
+  const userId = 'ID_DEL_USUARIO'; // Reemplaza esto con la forma en que obtienes el ID del usuario
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [status, setStatus] = useState('pending');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [taskType, setTaskType] = useState<'PERSONAL' | 'HOGAR' | 'ADMINISTRATIVA' | 'ACADEMICA' | 'LABORAL'>('PERSONAL');
+  const [notificationTime, setNotificationTime] = useState('');
 
   const togglePendiente = () => setIsPendienteOpen(!isPendienteOpen);
   const toggleEnCurso = () => setIsEnCursoOpen(!isEnCursoOpen);
   const toggleFinalizada = () => setIsFinalizadaOpen(!isFinalizadaOpen);
 
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get<ITask[]>('http://localhost:5000/api/tasks');
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Error al obtener las tareas:', error);
+    }
+  };
+
+  const addTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newTask: Partial<ITask> = {
+      user: userId,
+      title,
+      description,
+      status,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      taskType,
+      notificationTime,
+    };
+    try {
+      await axios.post('http://localhost:5000/api/tasks/create', newTask);
+      fetchTasks(); // Actualizar la lista de tareas después de crear una nueva tarea
+    } catch (err) {
+      console.error('Error al crear la tarea:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  
   return (
     <>
       <Navbar />
       <div className="flex flex-col lg:flex-row h-[100vh] bg-white">
+        
         <div className="w-full lg:w-2/3 mb-2">
           <div className="flex flex-col justify-center items-stretch mt-10 mx-4 lg:mx-10">
             <h1 className="text-3xl font-bold mb-6 border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">
@@ -74,31 +73,31 @@ const Task = () => {
             <div className="overflow-auto bg-white shadow-2xl flex w-full flex-col items-center rounded-[20px] mx-auto m-2 p-4 bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:!shadow-none">
               <div className="dashboard-tab w-full">
                 <table className="table-fixed w-full text-center">
-                <thead className="border-b-4 border-blue-900">
-                  <tr className="flex sm:flex-row">
-                    <th
-                      scope="col"
-                      className="flex-1 text-sm md:text-lg lg:text-xl text-blue-800 cursor-pointer m-3 text-center whitespace-nowrap"
-                      onClick={togglePendiente}
-                    >
-                      Pendiente  
-                    </th>
-                    <th
-                      scope="col"
-                      className="flex-1 text-sm md:text-lg lg:text-xl text-blue-800 cursor-pointer  m-3 text-center whitespace-nowrap"
-                      onClick={toggleEnCurso}
-                    >
-                      En Curso   
-                    </th>
-                    <th
-                      scope="col"
-                      className="flex-1 text-sm md:text-lg lg:text-xl text-blue-800 cursor-pointer   m-3 text-center whitespace-nowrap"
-                      onClick={toggleFinalizada}
-                    >
-                      Finalizada   
-                    </th>
-                  </tr>
-                </thead>
+                  <thead className="border-b-4 border-blue-900">
+                    <tr className="flex sm:flex-row">
+                      <th
+                        scope="col"
+                        className="flex-1 text-sm md:text-lg lg:text-xl text-blue-800 cursor-pointer m-3 text-center whitespace-nowrap"
+                        onClick={togglePendiente}
+                      >
+                        Pendiente  
+                      </th>
+                      <th
+                        scope="col"
+                        className="flex-1 text-sm md:text-lg lg:text-xl text-blue-800 cursor-pointer  m-3 text-center whitespace-nowrap"
+                        onClick={toggleEnCurso}
+                      >
+                        En Curso   
+                      </th>
+                      <th
+                        scope="col"
+                        className="flex-1 text-sm md:text-lg lg:text-xl text-blue-800 cursor-pointer   m-3 text-center whitespace-nowrap"
+                        onClick={toggleFinalizada}
+                      >
+                        Finalizada   
+                      </th>
+                    </tr>
+                  </thead>
                   <tbody className="align-top">
                     <tr>
                       <td
@@ -106,8 +105,11 @@ const Task = () => {
                           isPendienteOpen ? "block" : "hidden"
                         }`}
                       >
-                        <div className="text-gray-700 td-css grid grid-cols-1 gap- p-1 m-1">
-                          {/* Contenido de la sección "Pendiente" */}
+                        <div className="text-gray-700 td-css grid grid-cols-1 gap-4 p-1 m-1">
+                          {/* Filtrar y mostrar tareas pendientes */}
+                          {tasks.filter(task => task.status === 'pending').map((task) => (
+                            <div key={task._id}>{task.title}</div>
+                          ))}
                         </div>
                       </td>
                       <td
@@ -116,8 +118,10 @@ const Task = () => {
                         }`}
                       >
                         <div className="grid grid-cols-1 gap-4 p-1 m-1">
-                          <p>Aqui se Gestiona el Axio se mueve las card</p>
-                          {/* Contenido de la sección "En Curso" */}
+                          {/* Filtrar y mostrar tareas en curso */}
+                          {tasks.filter(task => task.status === 'in progress').map((task) => (
+                            <div key={task._id}>{task.title}</div>
+                          ))}
                         </div>
                       </td>
                       <td
@@ -126,11 +130,14 @@ const Task = () => {
                         }`}
                       >
                         <div className="grid grid-cols-1 gap-4 p-2 m-2">
-                          {/* Contenido de la sección "Finalizada" */}
+                          {/* Filtrar y mostrar tareas finalizadas */}
+                          {tasks.filter(task => task.status === 'completed').map((task) => (
+                            <div key={task._id}>{task.title}</div>
+                          ))}
                         </div>
                       </td>
                     </tr>
-                    {true && (
+                    {tasks.length === 0 && (
                       <tr>
                         <td colSpan={3} className="py-2 text-center">
                           <div className="bg-gray-100 p-4 rounded">
@@ -146,9 +153,11 @@ const Task = () => {
             </div>
           </div>
         </div>
+
         <div className="w-full lg:w-1/3 mb-2">
+
           <div className="flex flex-col justify-center items-center mt-10 mx-4 lg:mx-20">
-            <form className="border-0 border-blue-900 shadow-2xl flex w-full flex-col items-center rounded-[20px] mx-auto p-4 bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:!shadow-none">
+            <form  onSubmit={addTask} className="border-0 border-blue-900 shadow-2xl flex w-full flex-col items-center rounded-[20px] mx-auto p-4 bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:!shadow-none">
               <div className="mt-6 mb-3 flex flex-wrap gap-10 md:!gap-5">
                 <div className="flex flex-col items-center justify-center">
                   <p className="text-xl sm:text-2xl md:text-2xl xl:text-2xl 2xl:text-2xl font-normal text-blue-900">
@@ -159,13 +168,15 @@ const Task = () => {
               <div className="flex flex-col w-full">
                 <div>
                   <label className="text-xl text-blue-900" htmlFor="username">
-                    Descripcion
+                   Nombre
                   </label>
                   <input
                     id="username"
                     type="text"
                     className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     placeholder="Descripcion"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
                 <div>
@@ -173,10 +184,12 @@ const Task = () => {
                     Estado
                   </label>
                   <input
-                    id="username"
+                    id="status"
                     type="text"
                     className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                     placeholder="Estado"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
                   />
                 </div>
                 <div>
@@ -184,9 +197,11 @@ const Task = () => {
                     Fecha Inicio
                   </label>
                   <input
-                    id="username"
+                    id="startDate"
                     type="date"
                     className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
                   />
                 </div>
                 <div>
@@ -194,9 +209,11 @@ const Task = () => {
                     Fecha Fin
                   </label>
                   <input
-                    id="username"
+                    id="endDate"
                     type="date"
                     className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                   />
                 </div>
                 <div>
@@ -207,6 +224,8 @@ const Task = () => {
                     className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500"
                     name="tipo-tarea"
                     // placeholder="Seleccione un tipo"
+                    value={taskType}
+                    onChange={(e) => setTaskType(e.target.value as 'PERSONAL' | 'HOGAR' | 'ADMINISTRATIVA' | 'ACADEMICA' | 'LABORAL')}
                   >
                     <option value="Hogar">Hogar</option>
                     <option value="Administrativo">Administrativo</option>
@@ -220,9 +239,11 @@ const Task = () => {
                     Hora de Notificacion
                   </label>
                   <input
-                    id="username"
+                    id="notificationTime"
                     type="time"
                     className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                    value={notificationTime}
+                    onChange={(e) => setNotificationTime(e.target.value)}
                   />
                 </div>
                 <div>
@@ -233,9 +254,11 @@ const Task = () => {
                     Descripción Adicional
                   </label>
                   <textarea
-                    id="descripcionAdicional"
+                    id="description"
                     className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                  ></textarea>
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                 ></textarea>
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-6 mt-8">

@@ -1,51 +1,30 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-import "./style.css";
 import Navbar from '../Navbar/Navbar';
-// import { prueba } from "../utilities/utilities";
+import "./style.css";
 
-const Balance = () => {
+const BalanceNew: React.FC = () => {
   const [concepto, setConcepto] = useState("");
   const [monto, setMonto] = useState("");
   const [periodo, setPeriodo] = useState("");
   const [tipo, setTipo] = useState("Ingreso");
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([
+    { _id: "1", concepto: "Salario", monto: "5000000", tipo: "Ingreso" },
+    { _id: "2", concepto: "Alquiler", monto: "1500000", tipo: "Egreso" },
+    { _id: "3", concepto: "Venta de productos", monto: "2000000", tipo: "Ingreso" },
+    { _id: "4", concepto: "Compra de insumos", monto: "500000", tipo: "Egreso" }
+  ]);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/payments/", { withCredentials: true })
-      .then((res) => {
-        console.log(res);
-        setTasks(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  const formSubmitHandler = (e) => {
+  const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const nuevoPago = { concepto, monto, periodo, tipo };
-
-    axios
-      .post("http://localhost:5000/api/payments/create", nuevoPago, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res);
-        setTasks([...tasks, res.data]); // Actualiza la lista de tareas con el nuevo pago
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const nuevoPago = { _id: Math.random().toString(36).substr(2, 9), concepto, monto, periodo, tipo };
+    setTasks([...tasks, nuevoPago]);
   };
 
   return (
     <>
       <Navbar />
       <div className="container mx-auto my-10 p-5">
-      <h1 className="text-3xl font-bold mb-6 border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">Gastos</h1>
+        <h1 className="text-3xl font-bold mb-6 border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">Gastos</h1>
         <div className="grid grid-cols-1 md:grid-cols-[40%,60%] gap-4 px-4">
           <div className="flex justify-center">
             <form
@@ -56,11 +35,11 @@ const Balance = () => {
               <div className="gap-y-4 flex flex-col">
                 <div className="w-full grid grid-cols-2 gap-x-8">
                   <h3 className="text-blue-900 font-semibold text-left">Ingresos</h3>
-                  <p className="text-green-400 font-semibold">Gs. 200.000</p>
+                  <p className="text-green-400 font-semibold">Gs. 7,000,000</p>
                 </div>
                 <div className="w-full grid grid-cols-2 gap-x-8">
                   <h3 className="text-blue-900 font-semibold text-left">Egresos</h3>
-                  <p className="text-red-400 font-semibold">Gs. 200.000</p>
+                  <p className="text-red-400 font-semibold">Gs. 2,000,000</p>
                 </div>
               </div>
 
@@ -92,24 +71,24 @@ const Balance = () => {
                 <button
                   type="button"
                   onClick={() => setTipo("Ingreso")}
-                  className="btn-ingreso"
+                  className={`btn-ingreso ${tipo === "Ingreso" ? "bg-green-500" : "bg-gray-300"}`}
                 >
                   Ingreso
                 </button>
                 <button
                   type="button"
                   onClick={() => setTipo("Egreso")}
-                  className="btn-egreso"
+                  className={`btn-egreso ${tipo === "Egreso" ? "bg-red-500" : "bg-gray-300"}`}
                 >
                   Egreso
                 </button>
               </div>
-              {/* <button type="submit" className="btn-submit" className="btn-submit">Agregar Tarea</button> */}
+              <button type="submit" className="btn-submit">Agregar Tarea</button>
             </form>
           </div>
 
-          <div className="w-[32rem]">
-            <h2>    Historial</h2>
+          <div className="w-full md:w-[32rem]">
+            <h2>Historial</h2>
             {tasks.map((task) => (
               <div
                 key={task._id}
@@ -126,4 +105,4 @@ const Balance = () => {
   );
 };
 
-export default Balance;
+export default BalanceNew;

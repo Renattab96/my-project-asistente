@@ -30,7 +30,7 @@ const Cuenta = () => {
   const [user, setUser] = useState<User | null>(null);
   const [selectedImage, setSelectedImage] = useState(null);
   // const [isSwitchOn, setIsSwitchOn] = useState(false);
-
+// http://localhost:5000/api/users/        // const id ='6683404a7ba8a1a70a235d44'
   useEffect(() => {
     const fetchUser = async () => {
       try {

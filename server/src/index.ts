@@ -10,12 +10,42 @@ import paymentRoutes from './routes/paymentRoutes';
 import userRoutes from './routes/userRoutes';
 import adminRoutes from './routes/someAdminRoutes';
 
+
+// Swagger dependencies
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
 dotenv.config();
 connectDB();
 
 const app: Application = express();
 
-app.use(cors()); // Habilitar CORS para todas las solicitudes
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+} 
+)); // Habilitar CORS para todas las solicitudes
+
+// Swagger configuration
+const swaggerOptions = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Asistente WEB ',
+        version: '1.0.0',
+        description: 'API para crear tareas cuenta  implementacion con react ',
+      },
+      servers: [
+        {
+          url: 'http://localhost:5000',
+        },
+      ],
+    },
+    apis: ['./routes/*.ts'],
+  };
+  
+  const swaggerDocs = swaggerJsDoc(swaggerOptions);
+  app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(express.json());
 app.use(cookieParser());

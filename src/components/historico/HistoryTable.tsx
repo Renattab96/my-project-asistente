@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
-const {tasks} ="traer las tareas de la base ";
 
-const HistoryTable = ({ tasks }) => {
+const HistoryTable = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/api/tasks', { withCredentials: true })
+      .then((res) => {
+        console.log(res);
+        setTasks(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <div className="container mx-auto p-6">
-      
-      {/* {tasks && tasks.length > 0 ? (
+      {tasks && tasks.length > 0 ? (
         <div className="overflow-auto mt-4">
           <table className="w-full text-center table-auto">
             <thead className="border-b-4 border-blue-900">
@@ -33,14 +46,14 @@ const HistoryTable = ({ tasks }) => {
             </tbody>
           </table>
         </div>
-      ) : ( */}
+      ) : (
         <div className="mt-8 text-center bg-gray-100 p-4 rounded-lg">
           <p className="text-xl text-gray-600">No dispone de tareas vigentes</p>
           <Link to="/tarea" className="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
             Crear Tarea
           </Link>
         </div>
-      {/* )} */}
+      )}
     </div>
   );
 };

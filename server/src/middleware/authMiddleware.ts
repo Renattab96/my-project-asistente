@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { AuthenticatedRequest } from '../../src/middleware/AuthenticatedRequest'
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const token = req.cookies.token;
 
   if (!token) {
