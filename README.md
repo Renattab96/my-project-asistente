@@ -10,7 +10,7 @@ Este proyecto es una aplicación web gestionada con **React** en el frontend uti
 4. [Levantar el Proyecto](#levantar-el-proyecto)
 5. [Tecnologías Utilizadas](#tecnologías-utilizadas)
 6. [Contribuir](#contribuir)
-7. [Licencia](#licencia)
+
 
 ---
 
