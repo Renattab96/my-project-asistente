@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createTask, modifyTask, getTasks,borrarTask } from '../controllers/taskController';
+import { createTask, modifyTask, getTasks,borrarTask,archiveTask, getUserWithTasks } from '../controllers/taskController';
 import authMiddleware from '../middleware/authMiddleware';
 
 
@@ -66,7 +66,7 @@ const router = Router();
  *       400:
  *         description: Error en los datos proporcionados
  */
-router.post('/api/create', authMiddleware, createTask);
+router.post('/create', authMiddleware, createTask);
 /**
  * @swagger
  * /api/tasks/{taskId}:
@@ -202,6 +202,40 @@ router.get('/', authMiddleware, getTasks);
  *         description: Tarea no encontrada
  */
 router.delete('/delete/:taskId', authMiddleware, borrarTask);
+/**
+ * @swagger
+ * /tasks/archive/{taskId}:
+ *   put:
+ *     summary: Archivar una tarea
+ *     description: Cambia el estado de una tarea a "archivado" en lugar de eliminarla.
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: ID de la tarea a archivar
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Tarea archivada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Tarea archivada exitosamente
+ *                 task:
+ *                   $ref: '#/components/schemas/Task'  # Referencia al esquema de Task
+ *       404:
+ *         description: Tarea no encontrada
+ *       500:
+ *         description: Error en el servidor
+ */
+router.put('/tasks/archive/:taskId', archiveTask);
 
+// Ruta para obtener el usuario con sus tareas
+router.get('/user/tasks-autogestion', authMiddleware, getUserWithTasks); 
 
 export default router;

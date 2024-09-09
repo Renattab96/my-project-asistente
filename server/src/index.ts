@@ -54,7 +54,7 @@ app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //rutas 
 app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
+app.use('/api', taskRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin-route', adminRoutes);

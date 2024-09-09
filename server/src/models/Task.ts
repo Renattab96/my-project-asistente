@@ -16,12 +16,12 @@ const TaskSchema = new Schema<ITask>({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     title: { type: String, required: true },
     description: { type: String },
-    status: { type: String, enum: ['pending', 'in progress', 'completed'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'in progress', 'completed', 'archivado'], default: 'pending' },
     history: [{ status: String, date: Date }],
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     taskType: { type: String, enum: ['PERSONAL', 'HOGAR', 'ADMINISTRATIVA', 'ACADEMICA', 'LABORAL'], required: true },
-    notificationTime: { type: String, required: true } // Agregar el campo de hora de notificación
+    notificationTime: { type: String, required: true} // Agregar el campo de hora de notificación
 });
 
 export default model<ITask>('Task', TaskSchema);
