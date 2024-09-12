@@ -1,40 +1,15 @@
 import { Router } from 'express';
 import { registerUser, login ,logout} from '../controllers/authcontroller';
 
-
-
-const router = Router();
 /**
  * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Registrar un nuevo usuario
- *     description: Crea una nueva cuenta de usuario en la aplicación.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 description: Nombre completo del usuario
- *                 example: "Juan Perez"
- *               email:
- *                 type: string
- *                 description: Correo electrónico del usuario
- *                 example: "usuario@ejemplo.com"
- *               password:
- *                 type: string
- *                 description: Contraseña del usuario
- *                 example: "contraseña123"
- *     responses:
- *       201:
- *         description: Usuario registrado correctamente
- *       400:
- *         description: Error de validación en los datos del usuario
+ * tags:
+ *   name: user:
+ *   description: se aplica a los administradores de sistema y desarrolladores 
  */
+
+const router = Router();
+
 router.post('/register', registerUser);
 /**
  * @swagger
@@ -42,12 +17,13 @@ router.post('/register', registerUser);
  *   post:
  *     summary: Iniciar sesión
  *     description: Permite a un usuario iniciar sesión en la aplicación.
+ *    tags: [user]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: '../models/User.ts'
  *             properties:
  *               email:
  *                 type: string
@@ -67,9 +43,10 @@ router.post('/login', login);
 /**
  * @swagger
  * /api/auth/logout:
- *   post:
- *     summary: Cerrar sesión
- *     description: Permite a un usuario cerrar su sesión actual.
+ *   post: 
+ *     summary: Cerrar sesión  [admin &user]
+ *     description: Permite a un usuario cerrar su sesión actual. 
+ *     tags: [user]
  *     responses:
  *       200:
  *         description: Usuario cerrado sesión exitosamente

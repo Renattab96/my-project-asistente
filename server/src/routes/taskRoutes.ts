@@ -5,10 +5,12 @@ import authMiddleware from '../middleware/authMiddleware';
 
 const router = Router();
 
-// router.post('/create', authMiddleware, createTask);
-// router.put('/update/:taskId', authMiddleware, updateTask);
-// router.get('/', authMiddleware, getTasks);
-// router.delete('/delete/:taskId', authMiddleware, deleteTask);
+/**
+ * @swagger
+ * tags:
+ *   name: task
+ *   description: API para gestionar las tareas 
+ */
 
 /**
  * @swagger
@@ -16,6 +18,7 @@ const router = Router();
  *   post:
  *     summary: Crear una nueva tarea
  *     description: Crea una tarea con los detalles proporcionados.
+ *     tags: [task]
  *     requestBody:
  *       required: true
  *       content:
@@ -73,6 +76,7 @@ router.post('/create', authMiddleware, createTask);
  *   put:
  *     summary: Actualizar una tarea existente
  *     description: Permite a un usuario actualizar una tarea proporcionada su ID.
+ *     tags: [task ]
  *     parameters:
  *       - in: path
  *         name: taskId
@@ -132,6 +136,7 @@ router.put('/update/:taskId', authMiddleware, modifyTask);
  *   get:
  *     summary: Obtener todas las tareas
  *     description: Devuelve una lista de todas las tareas creadas por el usuario.
+ *     tags: [task ]
  *     responses:
  *       200:
  *         description: Lista de tareas devuelta exitosamente
@@ -186,8 +191,9 @@ router.get('/', authMiddleware, getTasks);
  * @swagger
  * /api/delete/{taskId}:
  *   delete:
- *     summary: Eliminar una tarea
+ *     summary: Eliminar una tarea  solo desde Backend
  *     description: Elimina una tarea proporcionada su ID.
+ *     tags: [task]
  *     parameters:
  *       - in: path
  *         name: taskId
@@ -208,6 +214,7 @@ router.delete('/delete/:taskId', authMiddleware, borrarTask);
  *   put:
  *     summary: Archivar una tarea
  *     description: Cambia el estado de una tarea a "archivado" en lugar de eliminarla.
+ *     tags: [task ]
  *     parameters:
  *       - in: path
  *         name: taskId
@@ -227,7 +234,7 @@ router.delete('/delete/:taskId', authMiddleware, borrarTask);
  *                   type: string
  *                   example: Tarea archivada exitosamente
  *                 task:
- *                   $ref: '#/components/schemas/Task'  # Referencia al esquema de Task
+ *                   $ref: './src/models/task'  # Referencia al esquema de Task
  *       404:
  *         description: Tarea no encontrada
  *       500:

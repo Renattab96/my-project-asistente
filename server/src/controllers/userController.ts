@@ -1,14 +1,19 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 import { uploadProfilePicture } from '../middleware/uploadMiddleware';
-import { sendNotification } from '../utils/notificationUtil';
+// import { sendNotification } from '../utils/notificationUtil';
 import bcrypt from 'bcryptjs';
 
 
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { username, lastname, email, password, confirmpassword } = req.body;
+  const { username, lastname, email, password, confirmpassword, role } = req.body;
 
+  // Verifica si el usuario ya existe
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+      return res.status(400).json({ message: 'Usuario ya existe, pruebe con otro correo electronico ' });
+  }
   if (password !== confirmpassword) {
     return res.status(400).json({ message: "Passwords do not match" });
   }
@@ -22,7 +27,7 @@ export const registerUser = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
       confirmpassword: hashedPassword,
-      role: 'user',
+      role: role || 'user',
       notificationsEnabled: true,
       loginAttempts: 0,
     });
@@ -30,8 +35,8 @@ export const registerUser = async (req: Request, res: Response) => {
     const user = await newUser.save();
     res.status(201).json(user);
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error en la creacion:', error);
+    res.status(500).json({ message: 'Error  al registra ususario ' });
   }
 };
 
