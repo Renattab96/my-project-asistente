@@ -34,26 +34,61 @@ const router = Router();
  *         description: Error de validación
  */
 router.post('/register', registerUser);
+
 /**
  * @swagger
  * /api/users/update:
  *   put:
  *     summary: Actualizar un usuario
- *     description: Permite a un usuario actualizar sus datos.
- *      tags: [user]
+ *     description: Permite a un usuario actualizar sus datos como username, email y notificaciones habilitadas.
+ *     tags:
+ *       - user
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *           $ref: '../models/User.ts'
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: RenattaBenitez
+ *               email:
+ *                 type: string
+ *                 example: renatta@example.com
+ *               notificationsEnabled:
+ *                 type: boolean
+ *                 example: true
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Usuario actualizado exitosamente
- *       400:
- *         description: Error de validación
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 notificationsEnabled:
+ *                   type: boolean
+ *                 profilePicture:
+ *                   type: string
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error del servidor
  */
 router.put('/update', authMiddleware, uploadProfilePicture, updateUser);
+
 /**
  * @swagger
  * /api/users/all-users:
@@ -99,57 +134,67 @@ router.get('/all-users', authMiddleware, adminOnly, listAllUsers);
  */
 router.get('/:id', authMiddleware, getUserById);
 
-// 
-router.put('/update-device-token', authMiddleware, updateUserDeviceToken);
-
-
 
 /**
  * @swagger
  * /api/users/delete/{userId}:
  *   delete:
- *     summary: Eliminar un usuario ROLE ADMIN
- *     description: Permite eliminar un usuario especificado por su ID. esto solo se puede gestionar mediante admin
-*     tags: [ user ]
- *      security:
-*       - bearerAuth: []  # Esto asume que usas JWT o algún otro token de autenticación del admin
+ *     summary: Eliminar un usuario
+ *     tags: 
+ *       - user
  *     parameters:
  *       - in: path
  *         name: userId
  *         required: true
+ *         description: ID del usuario a eliminar
  *         schema:
  *           type: string
- *         description: ID del usuario que se va a eliminar
  *     responses:
  *       200:
  *         description: Usuario eliminado exitosamente
  *       404:
  *         description: Usuario no encontrado
+ *       403:
+ *         description: Acceso denegado (solo para administradores)
  */
 router.delete('/delete/:userId', authMiddleware, adminOnly, deleteUser);
 
+
 /**
  * @swagger
-* /api/users/reset-password/{userId}:
-*   put:
-*     summary: Restablecer la contraseña de un usuario  ROLE ADMIN
-*     description: Permite a un administrador restablecer la contraseña de un usuario especificado por su ID. con el rol de admin
-*     tags: [user]
-*      security:
-*       - bearerAuth: []  # Esto asume que usas JWT o algún otro token de autenticación del admin
-*     parameters:
-*       - in: path
-*         name: userId
-*         required: true
-*         schema:
-*           type: string
-*     responses:
-*       200:
-*         description: Contraseña restablecida exitosamente
-*       404:
-*         description: Usuario no encontrado
-*/
+ * /api/users/reset-password/{userId}:
+ *   put:
+ *     summary: Restablecer la contraseña de un usuario ADMINISTRADOR 
+ *     tags: 
+ *       - user
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID del usuario al que se le restablecerá la contraseña
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Nueva contraseña para el usuario
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 description: Nueva contraseña
+ *     responses:
+ *       200:
+ *         description: Contraseña restablecida exitosamente
+ *       404:
+ *         description: Usuario no encontrado
+ *       403:
+ *         description: Acceso denegado (solo para administradores)
+ */
 router.put('/reset-password/:userId', authMiddleware, adminOnly, resetUserPassword);
+
 
 /**
  * @swagger
@@ -187,5 +232,7 @@ router.put('/reset-password/:userId', authMiddleware, adminOnly, resetUserPasswo
  */
 router.put('/change-password', authMiddleware, changeUserPassword);
 
+// 
+router.put('/update-device-token', authMiddleware, updateUserDeviceToken);
 
 export default router;

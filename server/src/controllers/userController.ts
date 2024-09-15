@@ -43,24 +43,35 @@ export const registerUser = async (req: Request, res: Response) => {
 // Actualizar el dato del usuario 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
   const { username, email, notificationsEnabled } = req.body;
+
   try {
-    const user = await User.findById(req.user);
+    // Asegúrate de que req.user sea el ID del usuario autenticado
+    const userId = req.user._id || req.user;
+    
+    const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    user.username = username || user.username;
-    user.email = email || user.email;
-    user.notificationsEnabled = notificationsEnabled !== undefined ? notificationsEnabled : user.notificationsEnabled;
+    // Actualizamos solo los campos recibidos en el body
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (notificationsEnabled !== undefined) {
+      user.notificationsEnabled = notificationsEnabled;
+    }
 
+    // Actualizar foto de perfil si se envió un archivo
     if (req.file) {
       user.profilePicture = req.file.path;
     }
 
+    // Guardar los cambios en la base de datos
     await user.save();
+
+    // Respuesta exitosa
     res.json(user);
 
+    // Enviar notificación si las notificaciones están habilitadas
     if (user.notificationsEnabled) {
       sendNotification(user, 'Profile updated successfully');
     }
@@ -69,6 +80,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 // Dar de baja el usuario Actividad del Admin 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
@@ -184,6 +196,7 @@ export const updateUserDeviceToken = async (req: Request, res: Response): Promis
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.params.id);
