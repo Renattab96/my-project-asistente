@@ -4,7 +4,7 @@ import { registerUser, login ,logout} from '../controllers/authcontroller';
 /**
  * @swagger
  * tags:
- *   name: auth:
+ *   name: auth
  *   description: se aplica a los administradores de sistema y desarrolladores 
  */
 
