@@ -144,7 +144,7 @@ export const resetUserPassword = async (req: Request, res: Response): Promise<vo
 };
 
 // Cambiar Contraseña por Usuario
-export const changeUserPassword = async (req: Request, res: Response): Promise<void> => {
+export const changeUserPassword = async (req: Request, res: Response): Promise<any> => {
   const { currentPassword, newPassword } = req.body;
 
   try {
@@ -179,7 +179,7 @@ export const listAllUsers = async (req: Request, res: Response): Promise<void> =
 }
 // Notification push 
 
-export const updateUserDeviceToken = async (req: Request, res: Response): Promise<void> => {
+export const updateUserDeviceToken = async (req: Request, res: Response): Promise<any> => {
   const { deviceToken } = req.body;
 
   try {
@@ -204,6 +204,33 @@ export const getUserById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'User not found' });
     }
     res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const updateAdditionalInfo = async (req: Request, res: Response): Promise<void> => {
+  const { birthDate, phoneNumber, notificationTime, address, jobTitle } = req.body;
+  
+  try {
+    const user = await User.findById(req.user);
+    
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    // Actualizar los campos de datos adicionales
+    if (birthDate) user.additionalInfo.birthDate = birthDate;
+    if (phoneNumber) user.additionalInfo.phoneNumber = phoneNumber;
+    if (notificationTime) user.additionalInfo.notificationTime = notificationTime;
+    if (address) user.additionalInfo.address = address;
+    if (jobTitle) user.additionalInfo.jobTitle = jobTitle;
+
+    await user.save();
+    res.json({ message: 'Additional info updated successfully', user });
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers , updateUserDeviceToken , registerUser,getUserById} from '../controllers/userController';
+import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById,  updateAdditionalInf, updateAdditionalInfo} from '../controllers/userController';
 import { deleteUser } from '../controllers/userController';
 import authMiddleware from '../middleware/authMiddleware';
 import { uploadProfilePicture } from '../middleware/uploadMiddleware';
@@ -231,6 +231,53 @@ router.put('/reset-password/:userId', authMiddleware, adminOnly, resetUserPasswo
  *         description: Error del servidor
  */
 router.put('/change-password', authMiddleware, changeUserPassword);
+/**
+ * @swagger
+ * /api/users/update-additional-info/{userId}:
+ *   put:
+ *     summary: Actualizar la información adicional del usuario
+ *     tags: [User]
+ *     description: Permite a un administrador actualizar los datos adicionales de un usuario (teléfono, cargo, dirección, etc.)
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID del usuario
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               birthDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "1990-01-01"
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "555-5555"
+ *               notificationTime:
+ *                 type: string
+ *                 example: "08:00"
+ *               address:
+ *                 type: string
+ *                 example: "123 Example St"
+ *               jobTitle:
+ *                 type: string
+ *                 example: "Manager"
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado exitosamente
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error del servidor
+ */
+router.put('/update-additional-info', authMiddleware, updateAdditionalInfo);
+
 
 // 
 router.put('/update-device-token', authMiddleware, updateUserDeviceToken);
