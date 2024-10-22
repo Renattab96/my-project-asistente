@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById,  updateAdditionalInf, updateAdditionalInfo} from '../controllers/userController';
+import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById, updateAdditionalInfo} from '../controllers/userController';
 import { deleteUser } from '../controllers/userController';
 import authMiddleware from '../middleware/authMiddleware';
 import { uploadProfilePicture } from '../middleware/uploadMiddleware';
