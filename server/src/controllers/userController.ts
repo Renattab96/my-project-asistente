@@ -201,7 +201,8 @@ export const getUserById = async (req: Request, res: Response) => {
 
   try {
 
-        const user = await User.findById(req.params.id).select('-password -confirmpassword');
+       // Excluir los campos 'password', 'confirmpassword' y 'email' con .select('-password -confirmpassword -email')
+    const user = await User.findById(req.params.id).select('-password -confirmpassword -email');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
