@@ -279,7 +279,7 @@ router.put('/change-password', authMiddleware, changeUserPassword);
 router.put('/update-additional-info', authMiddleware, updateAdditionalInfo);
 
 
-// 
+// Eliminar sesion 
 router.put('/update-device-token', authMiddleware, updateUserDeviceToken);
 
 export default router;
