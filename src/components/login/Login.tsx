@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Card from '@components/ui//Card';
 import CardContent from '@components/ui//CardContent';
 import CardHeader from '@components/ui/CardHeader';
@@ -9,7 +8,9 @@ import { Input} from '@components/ui/Input'
 import loginImage from '../../assets/img/img-login.jpg';
 import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Switch } from '@components/ui/Switch';
+import { login } from 'src/services/login.services';
+import { useDispatch } from 'react-redux';
+import { setToken } from 'src/redux/states/auth.state';
 // import { Alert, AlertDescription, AlertTitle } from "../../../@/components/ui/alert"
 
 const Login: React.FC = () => {
@@ -17,20 +18,13 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password,
-      });
-      const { token, user } = response.data;
-
-      // Guardar el token en el almacenamiento local
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
+      const response = await login(email, password);
+      dispatch(setToken(response.token));
       // Redireccionar al usuario a la página principal o al dashboard
       navigate('/tarea');
 
@@ -64,17 +58,17 @@ const Login: React.FC = () => {
   //   // Lógica para manejar el login
   // };
 
-  const notify = () => {
-    toast.info('Funcionalidad en desarrollo', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
+  // const notify = () => {
+  //   toast.info('Funcionalidad en desarrollo', {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
+  // };
 
   return (
     <div className="flex flex-col md:flex-row h-screen">

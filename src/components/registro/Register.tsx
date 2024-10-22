@@ -1,56 +1,56 @@
 import React, { useState } from 'react'
 import { Link } from "react-router-dom";
 import imgRegister from "../../assets/img/img-register.jpg";
-import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { register } from 'src/services/register.services';
 
 const Register = () => {
 
-    const [username, setUsername] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmpassword, setConfirmpassword] = useState('');
-    const navigate = useNavigate();
-  
-    const handleRegister = async (e: React.FormEvent) => {
-      e.preventDefault();
-      try {
-        const response = await axios.post('http://localhost:5000/api/auth/register', {
-          username,
-          lastname,
-          email,
-          password,
-          confirmpassword,
-        });
-  
-        toast.success('Registro exitoso!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-  
-        navigate('/');
-  
-      } catch (error) {
-        console.error('Error al registrar:', error);
-        toast.error('Error al registrar. Por favor, verifica tus datos.', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+  const [username, setUsername] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmpassword, setConfirmpassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const userData = {
+        username,
+        lastname,
+        email,
+        password,
+        confirmpassword
       }
-    };
+      await register(userData);
+      toast.success('Registro exitoso!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      navigate('/');
+
+    } catch (error) {
+      console.error('Error al registrar:', error);
+      toast.error('Error al registrar. Por favor, verifica tus datos.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -66,7 +66,7 @@ const Register = () => {
           <div className="w-full max-w-md">
             <h2 className="text-3xl font-bold mb-6">Crea una cuenta</h2>
             <form
-            onSubmit={handleRegister}
+              onSubmit={handleRegister}
             >
               <div className="mb-4">
                 <label htmlFor="nombre" className="block text-gray-700 text-lg">
@@ -77,7 +77,7 @@ const Register = () => {
                   name="nombre"
                   id="nombre"
                   value={username}
-                  onChange={(e)=>setUsername(e.target.value)}               
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
                 />
               </div>
@@ -93,7 +93,7 @@ const Register = () => {
                   name="apellido"
                   id="apellido"
                   value={lastname}
-                  onChange={(e)=>setLastname(e.target.value)}
+                  onChange={(e) => setLastname(e.target.value)}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
                 />
               </div>
@@ -106,7 +106,7 @@ const Register = () => {
                   name="email"
                   id="email"
                   value={email}
-                  onChange={(e)=>setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
                 />
               </div>
@@ -122,7 +122,7 @@ const Register = () => {
                   name="password"
                   id="password"
                   value={password}
-                  onChange={(e)=>setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
                 />
               </div>
@@ -138,7 +138,7 @@ const Register = () => {
                   name="confirmPassword"
                   id="confirmPassword"
                   value={confirmpassword}
-                  onChange={(e)=>setConfirmpassword(e.target.value)}
+                  onChange={(e) => setConfirmpassword(e.target.value)}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
                 />
               </div>

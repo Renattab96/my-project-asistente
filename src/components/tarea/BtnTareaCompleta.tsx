@@ -27,7 +27,9 @@
 // export default BtnTareaCompleta;
 
 import React from 'react';
-import axios from 'axios';
+import { postUpdateTask } from './services/updateTask.services';
+import { toast } from 'react-toastify';
+import { TaskStatus } from 'src/models/tasksStatus.model';
 
 interface BtnTareaCompletaProps {
   projectId: string;
@@ -37,12 +39,16 @@ interface BtnTareaCompletaProps {
 const BtnTareaCompleta: React.FC<BtnTareaCompletaProps> = ({ projectId, Update }) => {
   const statusUpdate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    axios.put(`http://localhost:8000/api/edit/tarea/${projectId}`, {
-      status: 'tres' // Cambiar el estado a "tres"
-    }).then((res) => {
-      Update(); // Llamar a la función Update para refrescar las tareas
-    }).catch((err) => {
-      console.log(err);
+    postUpdateTask(projectId, TaskStatus.Completed);
+    Update();
+    toast.success('Tarea actualizada exitosamente!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
     });
   };
 

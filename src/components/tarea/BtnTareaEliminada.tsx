@@ -1,5 +1,7 @@
 import React from 'react';
-import axios from 'axios';
+import { postUpdateTask } from './services/updateTask.services';
+import { TaskStatus } from 'src/models/tasksStatus.model';
+import { toast } from 'react-toastify';
 
 interface BtnTareaEliminadaProps {
   projectId: string;
@@ -9,12 +11,17 @@ interface BtnTareaEliminadaProps {
 const BtnTareaEliminada: React.FC<BtnTareaEliminadaProps> = ({ projectId, Update }) => {
   const statusUpdate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    axios.delete(`http://localhost:8000/api/tarea/eliminar/${projectId}`)
-      .then((res) => {
-        Update(); // Llamar a la función Update para refrescar las tareas
-      }).catch((err) => {
-        console.log(err);
-      });
+    postUpdateTask(projectId, TaskStatus.Archived);
+    Update();
+    toast.success('Tarea eliminada exitosamente!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   return (

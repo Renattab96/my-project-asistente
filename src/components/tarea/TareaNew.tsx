@@ -1,173 +1,248 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import moment from 'moment';
 import BtnTareaProgress from './BtnTareaProgress';
 import BtnTareaCompleta from './BtnTareaCompleta';
 import BtnTareaEliminada from './BtnTareaEliminada';
-
-interface Task {
-  _id: string;
-  accion: string;
-  fechainicio: string;
-  fechavencimiento: string;
-  status: string;
-  claseTarea: string;
-  hora: string;
-  descripcion: string;
-}
+import { getTasks } from './services/getTasks.services';
+import { mapApiResponseToTask, mapTaskToResponseToTask } from './models/mappersTask';
+import { Task } from './models/task';
+import { TaskStatus } from 'src/models/tasksStatus.model';
+import { TaskCount } from './models/taskCount';
+import { toast, ToastContainer } from 'react-toastify';
+import { createTask } from './services/createTask.services';
+import { TaskCreate } from './models/taskCreate';
 
 const TareaNew: React.FC = () => {
-  const [projects, setProjects] = useState<Task[]>([
-    {
-      _id: '1',
-      accion: 'Estudiar para la capacitacion de ISTQB',
-      fechainicio: '2024-03-01',
-      fechavencimiento: '2024-10-20',
-      status: 'uno',
-      claseTarea: 'Academico',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    },
-    {
-      _id: '2',
-      accion: 'Seguir la lectura de Kaizen',
-      fechainicio: '2024-03-01',
-      fechavencimiento: '2024-10-20',
-      status: 'uno',
-      claseTarea: 'Academico',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    }, {
-      _id: '3',
-      accion: 'Preparar la Pretesis 4 ',
-      fechainicio: '2024-07-01',
-      fechavencimiento: '2024-07-09',
-      status: 'dos',
-      claseTarea: 'Hogar',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    },{
-      _id: '4',
-      accion: 'Vender la Tv Smart 43',
-      fechainicio: '2024-07-01',
-      fechavencimiento: '2024-07-07',
-      status: 'tres',
-      claseTarea: 'Hogar',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    }, {
-      _id: '5',
-      accion: 'Gestion de Pagos del Mes ',
-      fechainicio: '2024-07-01',
-      fechavencimiento: '2024-07-15',
-      status: 'dos',
-      claseTarea: 'Hogar',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    },{
-      _id: '6',
-      accion: 'Ver Furiosa en el cine ',
-      fechainicio: '2024-07-01',
-      fechavencimiento: '2024-07-02',
-      status: 'dos',
-      claseTarea: 'Hogar',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    },
-    {
-      _id: '7',
-      accion: 'Reunión con el equipo',
-      fechainicio: '2024-07-01',
-      fechavencimiento: '2024-07-02',
-      status: 'tres',
-      claseTarea: 'Laboral',
-      hora: '14:00',
-      descripcion: 'Reunión semanal de seguimiento'
-    },
-    {
-      _id: '8',
-      accion: 'Enviar informe',
-      fechainicio: '2024-07-01',
-      fechavencimiento: '2024-07-02',
-      status: 'tres',
-      claseTarea: 'Laboral',
-      hora: '16:00',
-      descripcion: 'Enviar informe mensual al jefe'
-    },
-    {
-      _id: '9',
-      accion: 'Comprar pipeta para perro',
-      fechainicio: '2024-06-29',
-      fechavencimiento: '2024-06-30',
-      status: 'tres',
-      claseTarea: 'Hogar',
-      hora: '18:00',
-      descripcion: 'Compra de la pipeta de perro grande y compra de purina de la marca prontodog de 25 kl'
-    },
-    {
-      _id: '10',
-      accion: 'Ingles CPK Elementary 1 ',
-      fechainicio: '2024-03-01',
-      fechavencimiento: '2024-10-20',
-      status: 'dos',
-      claseTarea: 'Academico',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    },
-    {
-      _id: '11',
-      accion: 'Ingles CPK Elementary 2 ',
-      fechainicio: '2024-03-01',
-      fechavencimiento: '2024-10-20',
-      status: 'uno',
-      claseTarea: 'Academico',
-      hora: '10:00',
-      descripcion: 'Comprar comida para la semana'
-    },
-  ]);
+  // const [projects, setProjects] = useState<Task[]>([
+  //   {
+  //     _id: '1',
+  //     accion: 'Estudiar para la capacitacion de ISTQB',
+  //     fechainicio: '2024-03-01',
+  //     fechavencimiento: '2024-10-20',
+  //     status: 'uno',
+  //     claseTarea: 'Academico',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   },
+  //   {
+  //     _id: '2',
+  //     accion: 'Seguir la lectura de Kaizen',
+  //     fechainicio: '2024-03-01',
+  //     fechavencimiento: '2024-10-20',
+  //     status: 'uno',
+  //     claseTarea: 'Academico',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   }, {
+  //     _id: '3',
+  //     accion: 'Preparar la Pretesis 4 ',
+  //     fechainicio: '2024-07-01',
+  //     fechavencimiento: '2024-07-09',
+  //     status: 'dos',
+  //     claseTarea: 'Hogar',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   }, {
+  //     _id: '4',
+  //     accion: 'Vender la Tv Smart 43',
+  //     fechainicio: '2024-07-01',
+  //     fechavencimiento: '2024-07-07',
+  //     status: 'tres',
+  //     claseTarea: 'Hogar',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   }, {
+  //     _id: '5',
+  //     accion: 'Gestion de Pagos del Mes ',
+  //     fechainicio: '2024-07-01',
+  //     fechavencimiento: '2024-07-15',
+  //     status: 'dos',
+  //     claseTarea: 'Hogar',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   }, {
+  //     _id: '6',
+  //     accion: 'Ver Furiosa en el cine ',
+  //     fechainicio: '2024-07-01',
+  //     fechavencimiento: '2024-07-02',
+  //     status: 'dos',
+  //     claseTarea: 'Hogar',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   },
+  //   {
+  //     _id: '7',
+  //     accion: 'Reunión con el equipo',
+  //     fechainicio: '2024-07-01',
+  //     fechavencimiento: '2024-07-02',
+  //     status: 'tres',
+  //     claseTarea: 'Laboral',
+  //     hora: '14:00',
+  //     descripcion: 'Reunión semanal de seguimiento'
+  //   },
+  //   {
+  //     _id: '8',
+  //     accion: 'Enviar informe',
+  //     fechainicio: '2024-07-01',
+  //     fechavencimiento: '2024-07-02',
+  //     status: 'tres',
+  //     claseTarea: 'Laboral',
+  //     hora: '16:00',
+  //     descripcion: 'Enviar informe mensual al jefe'
+  //   },
+  //   {
+  //     _id: '9',
+  //     accion: 'Comprar pipeta para perro',
+  //     fechainicio: '2024-06-29',
+  //     fechavencimiento: '2024-06-30',
+  //     status: 'tres',
+  //     claseTarea: 'Hogar',
+  //     hora: '18:00',
+  //     descripcion: 'Compra de la pipeta de perro grande y compra de purina de la marca prontodog de 25 kl'
+  //   },
+  //   {
+  //     _id: '10',
+  //     accion: 'Ingles CPK Elementary 1 ',
+  //     fechainicio: '2024-03-01',
+  //     fechavencimiento: '2024-10-20',
+  //     status: 'dos',
+  //     claseTarea: 'Academico',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   },
+  //   {
+  //     _id: '11',
+  //     accion: 'Ingles CPK Elementary 2 ',
+  //     fechainicio: '2024-03-01',
+  //     fechavencimiento: '2024-10-20',
+  //     status: 'uno',
+  //     claseTarea: 'Academico',
+  //     hora: '10:00',
+  //     descripcion: 'Comprar comida para la semana'
+  //   },
+  // ]);
+
+  const [projects, setProjects] = useState<Task[]>([])
 
   const [accion, setAccion] = useState<string>('');
-  const [status, setStatus] = useState<string>('uno');
-  const [fechainicio, setinicio] = useState<string>('');
-  const [fechavencimiento, setFechavencimiento] = useState<string>('');
+  const [status, setStatus] = useState<string>('');
+  const [fechainicio, setinicio] = useState<string>("");
+  const [fechavencimiento, setFechavencimiento] = useState<string>("");
   const [claseTarea, settipotarea] = useState<string>('');
   const [hora, sethora] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
+  const [count, setCount] = useState<TaskCount>({
+    countPending: 0,
+    countInProgress: 0,
+    countCompleted: 0,
+    countDelayed: 0
+  })
 
-  const addProyecto = (e: React.FormEvent<HTMLFormElement>) => {
+  const addProyecto = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const nuevaTarea: Task = {
-      _id: Math.random().toString(36).substr(2, 9), // Generar un ID aleatorio
-      accion,
-      fechainicio,
-      fechavencimiento,
-      status,
-      claseTarea,
-      hora,
-      descripcion
-    };
-    setProjects([...projects, nuevaTarea]);
+    const taskCreate: TaskCreate = {
+      title: accion,
+      description: descripcion,
+      startDate: fechainicio,
+      endDate: fechavencimiento,
+      taskType: claseTarea,
+      notificationTime: hora,
+    }
+    try {
+      const newTask = await createTask(taskCreate)
+      toast.success('Tarea creada!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      const newTaskFormatted = mapTaskToResponseToTask(newTask)
+      setProjects([...projects, newTaskFormatted])
+    } catch {
+      toast.error('Error al momento de crear la tarea!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
-  const contarTareas = (status: string) => {
-    const now = moment();
-    return projects.filter(project => {
-      if (status === 'atrasadas') {
-        return moment(project.fechavencimiento).isBefore(now) && project.status !== 'uno';
-      }
-      return project.status === status;
-    }).length;
+  const isTaskDelayed = (task: Task): boolean => {
+    const now = moment(); // Obtener la fecha actual
+    return (task.status !== TaskStatus.Completed && task.status !== TaskStatus.Archived) && moment(task.fechavencimiento).isBefore(now);
   };
+
+  const countTasks = (tasks: Task[]) => {
+    // Reiniciamos los contadores
+    const taskCount = {
+      countPending: 0,
+      countInProgress: 0,
+      countCompleted: 0,
+      countDelayed: 0
+    };
+
+    tasks.forEach(task => {
+      // Usamos switch para manejar los estados
+      switch (task.status) {
+        case TaskStatus.Pending:
+          taskCount.countPending++;
+          break;
+        case TaskStatus.InProgress:
+          taskCount.countInProgress++;
+          break;
+        case TaskStatus.Completed:
+          taskCount.countCompleted++;
+          break;
+      }
+
+      if (isTaskDelayed(task)) {
+        taskCount.countDelayed++;
+      }
+    });
+
+    setCount(taskCount);
+  };
+
+  const fetchDataTasks = async () => {
+    const response = await getTasks();
+    const tasks = mapApiResponseToTask(response)
+    setProjects(tasks);
+    countTasks(tasks);
+  };
+
+  // const updateTaskById = (_id: string, updatedTaskData: Partial<Task>) => {
+  //   setProjects(prevProjects => 
+  //     prevProjects.map(project => 
+  //       project._id === _id ? { ...project, ...updatedTaskData } : project
+  //     )
+  //   );
+  // };
+
+  useEffect(() => {
+    console.log("proyectos", projects)
+  }, [projects])
+
+  useEffect(() => {
+    fetchDataTasks();
+  }, []);
 
   return (
     <>
       <Navbar />
       <div className="flex flex-col lg:flex-row h-[100vh] bg-white">
         {/* Sección del tablero de tareas */}
-        <div className="w-full lg:w-2/3 p-4">
+        {projects && <div className="w-full lg:w-2/3 p-4">
           <div className="flex flex-col justify-center items-stretch mt-10 m-10">
             <h1 className="text-3xl font-bold border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">Tareas</h1>
-            <div className='overflow-auto bg-white shadow-2xl flex flex-col items-center rounded-[20px] mx-auto m-2 p-4 bg-white bg-clip-border shadow-3xl dark:!bg-navy-800 dark:text-white dark:!shadow-none'>
+            <div className='overflow-auto bg-white shadow-2xl flex flex-col items-center rounded-[20px] mx-auto m-2 p-4 bg-clip-border shadow-3xl dark:!bg-navy-800 dark:text-white dark:!shadow-none'>
               <div className='dashboard-tab'>
                 <table className='table-fixed w-full text-center'>
                   <thead className='border-b-4 border-blue-900'>
@@ -181,22 +256,43 @@ const TareaNew: React.FC = () => {
                     <tr>
                       <td className='td-css'>
                         <div className='text-gray-700 grid grid-cols-1 gap-4 p-2 m-2'>
-                          {projects.filter(pro => pro.status === 'uno').map(pro =>
-                            <div key={pro._id} className='task-card-border border-blue-500 border-4 p-2 m-2 rounded-[20px]'>
-                              <h1><strong>Recordar: </strong>{pro.accion}</h1>
+                          {projects.filter(pro => pro.status === TaskStatus.Pending).map(pro =>
+                            <div key={pro._id} className={`task-card-border ${isTaskDelayed(pro) ? 'border-red-500' : 'border-blue-500'}  border-4 p-2 m-2 rounded-[20px]`}>
+                              <h1 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Recordar: </strong>{pro.accion}</h1>
                               <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
+                              <h5 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
                               <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
                               <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
                               <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
-                              <BtnTareaProgress projectId={pro._id} Update={() => { }} />
+                              <div className='flex gap-x-2 justify-center'>
+                                <BtnTareaProgress projectId={pro._id} Update={fetchDataTasks} />
+                                <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
+                              </div>
                             </div>
                           )}
                         </div>
                       </td>
                       <td className='td-css'>
                         <div className='grid grid-cols-1 gap-4 p-2 m-2'>
-                          {projects.filter(pro => pro.status === 'dos').map(pro =>
+                          {projects.filter(pro => pro.status === TaskStatus.InProgress).map(pro =>
+                            <div key={pro._id} className={`task-card-border ${isTaskDelayed(pro) ? 'border-red-500' : 'border-blue-500'}  border-4 p-2 m-2 rounded-[20px]`}>
+                              <h1 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Recordar: </strong>{pro.accion}</h1>
+                              <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
+                              <h5 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
+                              <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
+                              <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
+                              <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
+                              <div className='flex gap-x-2 justify-center'>
+                                <BtnTareaCompleta projectId={pro._id} Update={fetchDataTasks} />
+                                <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className='td-css'>
+                        <div className='grid grid-cols-1 gap-4 p-2 m-2'>
+                          {projects.filter(pro => pro.status === TaskStatus.Completed).map(pro =>
                             <div key={pro._id} className='task-card-border text-gray-700 border-blue-500 border-4 p-2 m-2 rounded-[20px]'>
                               <h1><strong>Recordar: </strong>{pro.accion}</h1>
                               <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
@@ -204,22 +300,7 @@ const TareaNew: React.FC = () => {
                               <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
                               <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
                               <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
-                              <BtnTareaCompleta projectId={pro._id} Update={() => { }} />
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className='td-css'>
-                        <div className='grid grid-cols-1 gap-4 p-2 m-2'>
-                          {projects.filter(pro => pro.status === 'tres').map(pro =>
-                            <div key={pro._id} className='task-card-border text-gray-700 border-blue-500 border-4 p-2 m-2 rounded-[20px]'>
-                              <h1><strong>Recordar: </strong>{pro.accion}</h1>
-                              <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
-                              <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
-                              <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
-                              <BtnTareaEliminada projectId={pro._id} Update={() => { }} />
+                              <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
                             </div>
                           )}
                         </div>
@@ -235,25 +316,25 @@ const TareaNew: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-blue-100 p-2 md:p-4 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-blue-700">Pendientes</h3>
-                  <p className="text-lg md:text-2xl">{contarTareas('uno')}</p>
+                  <p className="text-lg md:text-2xl">{count.countPending}</p>
                 </div>
                 <div className="bg-yellow-100 p-2 md:p-4 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-yellow-700">En Curso</h3>
-                  <p className="text-lg md:text-2xl">{contarTareas('dos')}</p>
+                  <p className="text-lg md:text-2xl">{count.countInProgress}</p>
                 </div>
                 <div className="bg-green-100 p-2 md:p-2 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-green-700">Finalizadas</h3>
-                  <p className="text-lg md:text-2xl">{contarTareas('tres')}</p>
+                  <p className="text-lg md:text-2xl">{count.countCompleted}</p>
                 </div>
                 <div className="bg-red-100 p-2 md:p-2 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-red-700">Atrasadas</h3>
-                  <p className="text-lg md:text-2xl">{contarTareas('atrasadas')}</p>
+                  <p className="text-lg md:text-2xl">{count.countDelayed}</p>
                 </div>
               </div>
             </div>
 
           </div>
-        </div>
+        </div>}
         {/* Sección de carga de datos */}
         <div className="w-full lg:w-1/3 p-3">
           <div className="flex flex-col justify-center items-center mt-10">
@@ -285,7 +366,7 @@ const TareaNew: React.FC = () => {
                     onChange={(e) => setFechavencimiento(e.target.value)} value={fechavencimiento} />
                 </div>
                 <label className="text-1xl text-blue-900" htmlFor="claseTarea">Tipo</label>
-                <select className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500" name="tipo-tarea" placeholder='Seleccione un tipo'
+                <select className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500" name="tipo-tarea"
                   onChange={(e) => settipotarea(e.target.value)} value={claseTarea}>
                   <option value="Hogar">Hogar</option>
                   <option value="Administrativo">Administrativo</option>
@@ -312,6 +393,7 @@ const TareaNew: React.FC = () => {
             </form>
           </div>
         </div>
+        <ToastContainer />
       </div>
 
     </>

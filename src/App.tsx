@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Login from "./components/login/Login";
-import HistoryPage from "@components/historico/HistoryPage";
+// import HistoryPage from "@components/historico/HistoryPage";
 import Cuenta from "./components/Cuenta/Cuenta";
-import Balance from "./components/balance/Balance";
+// import Balance from "./components/balance/Balance";
 import Register from "./components/registro/Register";
-import Task from "./components/tarea/Tarea";
+// import Task from "./components/tarea/Tarea";
 // Pantalla sin integracion 
 import LoginAdmin from "./components/LoginAdmin/loginAdmin" ;
 import AdminUserTable from "./components/ListaUsuarios/AdminUserTable";
