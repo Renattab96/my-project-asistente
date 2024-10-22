@@ -11,7 +11,7 @@ export const createTask = async (task: TaskCreate): Promise<TaskToResponse> => {
             description: task.description,
             startDate: task.startDate,
             endDate: task.endDate,
-            taskType: "LABORAL",
+            taskType: task.taskType,
             notificationTime: task.notificationTime
         });
         return response.data

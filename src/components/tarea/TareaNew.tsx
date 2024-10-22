@@ -12,6 +12,7 @@ import { TaskCount } from './models/taskCount';
 import { toast, ToastContainer } from 'react-toastify';
 import { createTask } from './services/createTask.services';
 import { TaskCreate } from './models/taskCreate';
+import { getProtectedData } from 'src/services/protectedService.services';
 
 const TareaNew: React.FC = () => {
   // const [projects, setProjects] = useState<Task[]>([
@@ -126,7 +127,7 @@ const TareaNew: React.FC = () => {
   const [projects, setProjects] = useState<Task[]>([])
 
   const [accion, setAccion] = useState<string>('');
-  const [status, setStatus] = useState<string>('');
+  // const [status, setStatus] = useState<string>('');
   const [fechainicio, setinicio] = useState<string>("");
   const [fechavencimiento, setFechavencimiento] = useState<string>("");
   const [claseTarea, settipotarea] = useState<string>('');
@@ -227,7 +228,8 @@ const TareaNew: React.FC = () => {
   // };
 
   useEffect(() => {
-    console.log("proyectos", projects)
+    console.log("proyectos", projects);
+    getProtectedData("/users/671584bf49d6306a7f2bb3ef")
   }, [projects])
 
   useEffect(() => {
@@ -350,11 +352,11 @@ const TareaNew: React.FC = () => {
                   <input id="accion" type="text" className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" placeholder='Descripcion'
                     onChange={(e) => setAccion(e.target.value)} value={accion} />
                 </div>
-                <div>
+                {/* <div>
                   <label className="text-1xl text-blue-900" htmlFor="status">Estado </label>
                   <input id="status" type="text" className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" placeholder='Estado'
                     onChange={(e) => setStatus(e.target.value)} value={status} />
-                </div>
+                </div> */}
                 <div>
                   <label className="text-1xl text-blue-900" htmlFor="fechainicio">Fecha Inicio</label>
                   <input id="fechainicio" type="date" className="block w-full px-4 py-2 mt-2 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
@@ -368,11 +370,11 @@ const TareaNew: React.FC = () => {
                 <label className="text-1xl text-blue-900" htmlFor="claseTarea">Tipo</label>
                 <select className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500" name="tipo-tarea"
                   onChange={(e) => settipotarea(e.target.value)} value={claseTarea}>
-                  <option value="Hogar">Hogar</option>
-                  <option value="Administrativo">Administrativo</option>
-                  <option value="Academico">Academico</option>
-                  <option value="Laboral">Laboral</option>
-                  <option value="Personal">Personal</option>
+                  <option value="HOGAR">Hogar</option>
+                  <option value="ADMINISTRATIVA">Administrativo</option>
+                  <option value="ACADEMICA">Academico</option>
+                  <option value="LABORAL">Laboral</option>
+                  <option value="PERSONAL">Personal</option>
                 </select>
                 <div>
                   <label className="text-1xl text-blue-900" htmlFor="hora">Hora de Notificacion</label>
