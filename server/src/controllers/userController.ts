@@ -3,7 +3,7 @@ import User from '../models/User';
 // import { uploadProfilePicture } from '../middleware/uploadMiddleware';
 // import { sendNotification } from '../utils/notificationUtil';
 import bcrypt from 'bcryptjs';
-
+import mongoose from 'mongoose';
 
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -333,5 +333,35 @@ export const deleteProfilePicture = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error al eliminar la imagen de perfil:', error);
     return res.status(500).json({ message: 'Error al eliminar la imagen de perfil' });
+  }
+};
+
+export const getProfilePictureById = async (req: Request, res: Response) => {
+  try {
+    // Limpia el ID recibido
+    const { id } = req.params;
+    const cleanedId = id.trim(); // Elimina espacios o saltos de línea
+
+    console.log("ID recibido:", cleanedId); // Verifica el ID que está llegando
+
+    // Verificar si el ID es un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(cleanedId)) {
+      return res.status(400).json({ message: 'ID de usuario no válido' });
+    }
+
+    // Buscar al usuario por su ID
+    const user = await User.findById(cleanedId, '_id username profilePicture');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    return res.status(200).json({
+      message: 'Imagen de perfil obtenida con éxito',
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.error('Error al obtener la imagen de perfil:', error);
+    return res.status(500).json({ message: 'Error al obtener la imagen de perfil' });
   }
 };

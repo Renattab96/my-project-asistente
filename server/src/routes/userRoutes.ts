@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById, updateAdditionalInfo,uploadProfilePicture,deleteUser,updateProfilePicture, deleteProfilePicture} from '../controllers/userController';
+import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById, updateAdditionalInfo,uploadProfilePicture,deleteUser,updateProfilePicture, deleteProfilePicture,getProfilePictureById} from '../controllers/userController';
 import authMiddleware from '../middleware/authMiddleware';
 // import { uploadProfilePicture } from '../middleware/uploadMiddleware';
 import adminOnly from '../middleware/roleMiddleware';
@@ -286,5 +286,8 @@ router.post('/upload-profile-picture', uploadProfilePicture);
 router.put('/update-profile-picture', updateProfilePicture);
 // eliminar foto de perfil
 router.put('/delete-profile-picture', deleteProfilePicture);
+
+// consultar la imagen
+router.get('/profile-picture/:id', getProfilePictureById);
 
 export default router;
