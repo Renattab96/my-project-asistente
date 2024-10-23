@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
-import { uploadProfilePicture } from '../middleware/uploadMiddleware';
+// import { uploadProfilePicture } from '../middleware/uploadMiddleware';
 // import { sendNotification } from '../utils/notificationUtil';
 import bcrypt from 'bcryptjs';
 
@@ -237,5 +237,37 @@ export const updateAdditionalInfo = async (req: Request, res: Response): Promise
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Controlador para la subida de imágenes en base64
+export const uploadProfilePicture = async (req: Request, res: Response) => {
+  try {
+    const { userId, base64Image } = req.body;
+
+    // Verificar que se envió la imagen y el ID de usuario
+    if (!userId || !base64Image) {
+      return res.status(400).json({ message: 'ID de usuario o imagen faltante' });
+    }
+
+    // Validar que el usuario existe
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Guardar la imagen en el campo `profilePicture`
+    user.profilePicture = base64Image;
+
+    // Guardar los cambios en la base de datos
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Imagen de perfil subida con éxito',
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.error('Error al subir la imagen de perfil:', error);
+    return res.status(500).json({ message: 'Error al subir la imagen de perfil' });
   }
 };

@@ -30,7 +30,7 @@ const UserSchema = new Schema<IUser>({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     confirmpassword: { type: String, required: true },
-    profilePicture: { type: String },
+    profilePicture: { type: String, default: '' }, // Almacena la imagen en formato base64
     notificationsEnabled: { type: Boolean, default: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     loginAttempts: { type: Number, required: true, default: 0 },

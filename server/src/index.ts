@@ -45,6 +45,10 @@ const swaggerOptions = {
   };
   
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+  // Aumentar el límite de tamaño para solicitudes JSON
+app.use(express.json({ limit: '50mb' })); // Aumentar el límite a 50 MB (ajusta según tus necesidades)
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 //  Middleware  
 app.use(express.json());
 app.use(cookieParser());

@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById, updateAdditionalInfo} from '../controllers/userController';
-import { deleteUser } from '../controllers/userController';
+import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById, updateAdditionalInfo,uploadProfilePicture,deleteUser} from '../controllers/userController';
 import authMiddleware from '../middleware/authMiddleware';
-import { uploadProfilePicture } from '../middleware/uploadMiddleware';
+// import { uploadProfilePicture } from '../middleware/uploadMiddleware';
 import adminOnly from '../middleware/roleMiddleware';
 
 const router = Router();
@@ -281,5 +280,7 @@ router.put('/update-additional-info', authMiddleware, updateAdditionalInfo);
 
 // Eliminar sesion 
 router.put('/update-device-token', authMiddleware, updateUserDeviceToken);
+
+router.post('/upload-profile-picture', uploadProfilePicture);
 
 export default router;
