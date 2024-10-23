@@ -271,3 +271,34 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Error al subir la imagen de perfil' });
   }
 };
+
+export const updateProfilePicture = async (req: Request, res: Response) => {
+  try {
+    const { userId, base64Image } = req.body;
+
+    // Verificar que se enviaron el userId y base64Image
+    if (!userId || !base64Image) {
+      return res.status(400).json({ message: 'ID de usuario o imagen faltante' });
+    }
+
+    // Verificar que el usuario existe
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Actualizar la imagen de perfil
+    user.profilePicture = base64Image;
+
+    // Guardar los cambios en la base de datos
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Imagen de perfil actualizada con éxito',
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.error('Error al actualizar la imagen de perfil:', error);
+    return res.status(500).json({ message: 'Error al actualizar la imagen de perfil' });
+  }
+};
