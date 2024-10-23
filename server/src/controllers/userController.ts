@@ -302,3 +302,36 @@ export const updateProfilePicture = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Error al actualizar la imagen de perfil' });
   }
 };
+
+
+// Controlador para eliminar la imagen de perfil
+export const deleteProfilePicture = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+
+    // Verificar que se envió el userId
+    if (!userId) {
+      return res.status(400).json({ message: 'ID de usuario faltante' });
+    }
+
+    // Verificar que el usuario existe
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Restablecer la imagen de perfil a un valor vacío o por defecto
+    user.profilePicture = ''; // Puedes poner una URL por defecto si es necesario
+
+    // Guardar los cambios en la base de datos
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Imagen de perfil eliminada con éxito',
+      profilePicture: user.profilePicture, // Debería ser un string vacío o una URL por defecto
+    });
+  } catch (error) {
+    console.error('Error al eliminar la imagen de perfil:', error);
+    return res.status(500).json({ message: 'Error al eliminar la imagen de perfil' });
+  }
+};
