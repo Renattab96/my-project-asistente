@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById,  updateAdditionalInf, updateAdditionalInfo} from '../controllers/userController';
-import { deleteUser } from '../controllers/userController';
+import { updateUser , resetUserPassword ,changeUserPassword,listAllUsers ,updateUserDeviceToken , registerUser,getUserById, updateAdditionalInfo,uploadProfilePicture,deleteUser,updateProfilePicture, deleteProfilePicture,getProfilePictureById} from '../controllers/userController';
 import authMiddleware from '../middleware/authMiddleware';
-import { uploadProfilePicture } from '../middleware/uploadMiddleware';
+// import { uploadProfilePicture } from '../middleware/uploadMiddleware';
 import adminOnly from '../middleware/roleMiddleware';
 
 const router = Router();
@@ -279,7 +278,16 @@ router.put('/change-password', authMiddleware, changeUserPassword);
 router.put('/update-additional-info', authMiddleware, updateAdditionalInfo);
 
 
-// 
+// Eliminar sesion 
 router.put('/update-device-token', authMiddleware, updateUserDeviceToken);
+// subir fotos de perfil 
+router.post('/upload-profile-picture', uploadProfilePicture);
+// editar o actualizar foto de perfil 
+router.put('/update-profile-picture', updateProfilePicture);
+// eliminar foto de perfil
+router.put('/delete-profile-picture', deleteProfilePicture);
+
+// consultar la imagen
+router.get('/profile-picture/:id', getProfilePictureById);
 
 export default router;
