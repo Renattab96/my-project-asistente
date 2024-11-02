@@ -12,7 +12,8 @@ import { TaskCount } from './models/taskCount';
 import { toast, ToastContainer } from 'react-toastify';
 import { createTask } from './services/createTask.services';
 import { TaskCreate } from './models/taskCreate';
-import { getProtectedData } from 'src/services/protectedService.services';
+import { useDispatch } from 'react-redux';
+import { setId } from 'src/redux/states/user.state';
 
 const TareaNew: React.FC = () => {
   // const [projects, setProjects] = useState<Task[]>([
@@ -124,6 +125,8 @@ const TareaNew: React.FC = () => {
   //   },
   // ]);
 
+  const dispatch = useDispatch();
+
   const [projects, setProjects] = useState<Task[]>([])
 
   const [accion, setAccion] = useState<string>('');
@@ -162,7 +165,7 @@ const TareaNew: React.FC = () => {
         progress: undefined,
       });
       const newTaskFormatted = mapTaskToResponseToTask(newTask)
-      setProjects([...projects, newTaskFormatted])
+      setProjects([...projects, newTaskFormatted]);
     } catch {
       toast.error('Error al momento de crear la tarea!', {
         position: "top-right",
@@ -217,6 +220,8 @@ const TareaNew: React.FC = () => {
     const tasks = mapApiResponseToTask(response)
     setProjects(tasks);
     countTasks(tasks);
+    dispatch(setId(response._id));
+
   };
 
   // const updateTaskById = (_id: string, updatedTaskData: Partial<Task>) => {
@@ -226,11 +231,6 @@ const TareaNew: React.FC = () => {
   //     )
   //   );
   // };
-
-  useEffect(() => {
-    console.log("proyectos", projects);
-    getProtectedData("/users/671584bf49d6306a7f2bb3ef")
-  }, [projects])
 
   useEffect(() => {
     fetchDataTasks();

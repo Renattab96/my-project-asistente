@@ -31,13 +31,13 @@ function App() {
         {/* <Route path="/historico" element={<HistoryPage/>} />   */}
          {/* <Route path="/tarea" element={<Task/>}/>  */}
         {/* <Route path="/balance" element={<Balance />} />  */}
-        <Route path="/cuenta/:id" element={<Cuenta />} />
+        <Route path="/cuenta" element={<Cuenta />} />
 
         {/* Inicio Pantalla sin api   */}
         <Route path="/historico" element={<HistoryPageNew/>} />
         <Route path="/tarea" element={<TaskNew/>} />  
         <Route path="/balance" element={<BalanceNew />} />   
-        <Route path="/cuenta/:id" element={<CuentaNew />} /> 
+        {/* <Route path="/cuenta" element={<CuentaNew />} />  */}
         <Route path='/support' element={<LoginAdmin />} />  
         <Route path='/support/gestion' element={< AdminUserTable />} />   
         <Route path="/support/user_data/:id" element={<DetalleAdmin />} />

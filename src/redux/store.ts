@@ -1,8 +1,9 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { Auth } from '../models/auth.model';
+import { UserAuth } from 'src/models/userAuth.model';
 import authReducer from "./states/auth.state"
+import userAuthReducer from "./states/user.state"
 
-import storage from 'redux-persist/lib/storage';
 import {
     persistStore,
     persistReducer,
@@ -13,19 +14,22 @@ import {
     PURGE,
     REGISTER,
 } from 'redux-persist'
+import sessionStorage from 'redux-persist/lib/storage/session';
 
 export interface AppStore {
     auth: Auth; // Añade otros estados aquí según sea necesario
+    userAuth: UserAuth;
 }
 
 const persistConfig = {
     key: 'root',
-    storage,
-    whitelist: ["auth"],
+    storage: sessionStorage,
+    whitelist: ["auth", "userAuth"],
 };
 
 const rootReducer = combineReducers({
-    auth: authReducer
+    auth: authReducer,
+    userAuth: userAuthReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
