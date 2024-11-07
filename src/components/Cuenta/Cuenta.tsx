@@ -20,6 +20,7 @@ import { getPhoto } from "./services/getPhoto.services";
 import { updatePhoto } from "./services/updatePhoto.services";
 import { Loader2 } from "lucide-react"
 import { deletePhoto } from "./services/deletePhoto";
+import { DialogChangePassword } from "@components/Cuenta/DialogChangePassword";
 
 const formSchema = z.object({
   cargo: z.string()
@@ -53,6 +54,7 @@ const Cuenta = () => {
   const [textButtonChangeImage, setTextButtonChangeImage] = useState<boolean>(false);
   const [btnLoading, setBtnLoading] = useState<boolean>(false);
   const [btnDeleteLoading, setBtnDeleteLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const id = useSelector((state: RootState) => state.userAuth.id)
   const fetchDataUserInfo = async () => {
@@ -241,7 +243,15 @@ const Cuenta = () => {
         progress: undefined,
       });
     }
-  }
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  const onOpen = () => {
+    setOpen(true);
+  };
 
   useEffect(() => {
     fetchDataUserInfo();
@@ -441,12 +451,20 @@ const Cuenta = () => {
                 >
                   Guardar
                 </Button>
+                <Button
+                  type="button"
+                  className="w-full bg-blue-500 text-white rounded hover:bg-blue-700"
+                  onClick={onOpen}
+                >
+                  Cambiar Contraseña
+                </Button>
               </form>
             </Form>
           </div>
         </div>
       </div>
       <ToastContainer />
+      <DialogChangePassword open={open} onClose={onClose}/>
     </>
   );
 };
