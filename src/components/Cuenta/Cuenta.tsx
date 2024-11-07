@@ -7,12 +7,52 @@ import { useSelector } from "react-redux";
 import { RootState } from "src/redux/store";
 import { getUserInfo } from "./services/getUserInfo.services";
 import { toast, ToastContainer } from "react-toastify";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm, useFormState } from "react-hook-form"
+import { z } from "zod"
 
+import { Input } from "@components/ui/Input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form";
+import { Switch } from "@components/ui/Switch";
+import { updateUserInfo } from "./services/updateUserInfo.services";
+import { UpdateUSer } from "./models/updateUser";
+import { getPhoto } from "./services/getPhoto.services";
+import { updatePhoto } from "./services/updatePhoto.services";
+import { Loader2 } from "lucide-react"
+import { deletePhoto } from "./services/deletePhoto";
 
+const formSchema = z.object({
+  cargo: z.string()
+    .optional()
+    .refine((val) => val === undefined || val.length >= 3, {
+      message: "El cargo debe tener al menos 3 caracteres.",
+    }),
+  direccion: z.string()
+    .optional()
+    .refine((val) => val === undefined || val.length >= 4, {
+      message: "La dirección debe tener al menos 4 caracteres.",
+    }),
+  email: z.string()
+    .optional()
+    .refine((val) => val === undefined || /^\S+@\S+\.\S+$/.test(val), {
+      message: "Debe ser un correo electrónico válido.",
+    }),
+  telefono: z.string()
+    .optional()
+    .refine((val) => val === undefined || (/^\d{8,}$/.test(val)), {
+      message: "El teléfono debe tener al menos 8 caracteres y solo números.",
+    }),
+  notificacion: z.boolean().optional(),
+});
 
+type FormValues = z.infer<typeof formSchema>;
 
 const Cuenta = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [textButtonChangeImage, setTextButtonChangeImage] = useState<boolean>(false);
+  const [btnLoading, setBtnLoading] = useState<boolean>(false);
+  const [btnDeleteLoading, setBtnDeleteLoading] = useState<boolean>(false);
 
   const id = useSelector((state: RootState) => state.userAuth.id)
   const fetchDataUserInfo = async () => {
@@ -30,7 +70,8 @@ const Cuenta = () => {
     else {
       try {
         const response = await getUserInfo(id);
-        setUser(response)
+        setUser(response);
+        resetForm(response);
       }
       catch {
         toast.error('Error al cargar los datos del usuario!', {
@@ -45,13 +86,190 @@ const Cuenta = () => {
       }
     }
   }
+  const fetchPhoto = async () => {
+    if (!id) {
+      toast.error('Error al cargar la imagen de usuario!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    else {
+      setBtnLoading(true);
+      try {
+        const responsePhoto = await getPhoto(id);
+        setProfilePicture(responsePhoto === "" ? null : responsePhoto);
+        setTextButtonChangeImage(responsePhoto === "" ? false : true)
+      }
+      catch {
+        toast.error('Error al cargar la imagen de usuario!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      finally {
+        setBtnLoading(false);
+      }
+    }
+  }
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      cargo: "",
+      direccion: "",
+      email: "",
+      telefono: "",
+      notificacion: false,
+    },
+  })
+
+  const onSubmit = async (data: FormValues) => {
+    const params: UpdateUSer = {
+      email: data.email ?? undefined,
+      jobTitle: data.cargo ?? undefined,
+      address: data.direccion ?? undefined,
+      phoneNumber: data.telefono ?? undefined,
+      notificationsEnabled: data.notificacion ?? undefined
+    }
+    const response = await updateUserInfo(
+      params
+    )
+    setUser(response);
+    resetForm(response);
+  }
+
+  const { isDirty } = useFormState({ control: form.control }); // Detecta cambios
+  const [isChanged, setIsChanged] = useState(false);
+  const initialValues = form.getValues();
+
+  const resetForm = (response: User) => {
+    form.reset({
+      cargo: response.additionalInfo.jobTitle || "",
+      direccion: response.additionalInfo.address || "",
+      email: response.email || "",
+      telefono: response.additionalInfo.phoneNumber || "",
+      notificacion: response.notificationsEnabled || false,
+    });
+  };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProfilePicture(reader.result as string); // Guarda la imagen en base64 en el estado independiente
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error al cargar la imagen", error);
+        toast.error("Error al cargar la imagen, inténtalo de nuevo.");
+      }
+    }
+  };
+
+  const openFileSelector = () => {
+    const fileInput = document.getElementById("upload-image") as HTMLInputElement;
+    fileInput.click();
+  };
+
+  const handleDeletePhoto = async () => {
+    if (!id) {
+      toast.error('Error al eliminar la foto de perfil!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    else {
+      try {
+        setBtnDeleteLoading(true);
+        const responsePhoto = await deletePhoto(id);
+        setProfilePicture(responsePhoto === "" ? null : responsePhoto);
+        setTextButtonChangeImage(false);
+        toast.success('Se ha eliminado correctamente la foto de perfil!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      catch {
+        toast.error('Error al eliminar la foto de perfil!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      finally {
+        setBtnDeleteLoading(false);
+      }
+    }
+  }
+
+  const funtionUpdatePhoto = async (profilePicture: string) => {
+    if (user) {
+      await updatePhoto(user._id, profilePicture)
+      toast.success('Se ha actualizado correctamente la foto de perfil!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }
 
   useEffect(() => {
     fetchDataUserInfo();
-  }, [])
+    fetchPhoto();
+  }, []);
 
+  useEffect(() => {
+    const subscription = form.watch((currentValues) => {
+      const hasChanges = Object.keys(currentValues).some(
+        (key) => currentValues[key as keyof FormValues] !== initialValues[key as keyof FormValues]
+      );
+      setIsChanged(hasChanges);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, initialValues]);
 
-
+  useEffect(() => {
+    if (profilePicture) {
+      try {
+        setBtnLoading(true)
+        funtionUpdatePhoto(profilePicture)
+        setTextButtonChangeImage(true)
+      }
+      finally {
+        setBtnLoading(false)
+      }
+    }
+  }, [profilePicture])
 
   return (
     <>
@@ -66,11 +284,14 @@ const Cuenta = () => {
               <h2 className="text-2xl font-semibold mb-4">Hola, {user ? user.username : 'Cargando...'}</h2>
               <div className="bg-white shadow-md rounded-lg p-6 w-full">
                 <div className="flex items-center justify-center mb-6">
-                  {/* <img
-                  className="h-full w-full rounded-full"
-                  src={selectedImage ? selectedImage.toString() : user?.profilePicture || userIcon}
-                  alt="Avatar"
-                /> */}
+
+                  {btnLoading ?
+                    <Loader2 className="animate-spin" />
+                    : <img
+                      className="w-full rounded-full h-96"
+                      src={profilePicture ? profilePicture : userIcon}
+                      alt="Avatar"
+                    />}
                 </div>
                 <div className="mb-4 text-left">
                   <h3 className="text-xl font-bold">Datos Personales</h3>
@@ -90,54 +311,138 @@ const Cuenta = () => {
                     <strong>Cargo:</strong> {user ? user.additionalInfo.jobTitle || 'No disponible' : 'Cargando...'}
                   </p>
                 </div>
-                {/* <input
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                id="upload-image"
-                onChange={handleImageChange}
-              /> */}
-                <Button
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                  onClick={() =>
-                    document.getElementById("upload-image")!.click()
+                <div className="flex gap-4">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    id="upload-image"
+                    onChange={handleImageChange}
+                  />
+                  <Button
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 mt-4 w-28"
+                    onClick={openFileSelector}
+                  >
+                    {
+                      btnLoading ?
+                        <Loader2 className="animate-spin" />
+                        :
+                        textButtonChangeImage ? "Editar Foto" : profilePicture ? "Guardar Foto" : "Cargar Foto"
+                    }
+                  </Button>
+                  {textButtonChangeImage && profilePicture &&
+                    <Button
+                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 mt-4 w-28"
+                      onClick={handleDeletePhoto}
+                    >
+                      {
+                        btnDeleteLoading ?
+                          <Loader2 className="animate-spin" />
+                          :
+                          "Eliminar Foto"
+                      }
+                    </Button>
                   }
-                >
-                  Editar Foto
-                </Button>
+                </div>
+
               </div>
             </div>
           </div>
           <div className="w-1/2 px-2">
-            <div className="bg-white shadow-md rounded-lg p-6 w-full">
-              <h3 className="text-xl font-bold mb-4">Datos Adicionales</h3>
-              <div className="mb-4">
-                <label className="block text-gray-700">Cargo</label>
-                <input className="w-full border-2 rounded p-2" type="text" placeholder="Cargo" />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Ingreso</label>
-                <input className="w-full border-2 rounded p-2" type="text" placeholder="Ingreso" />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Email</label>
-                <input className="w-full border-2 rounded p-2" type="email" placeholder="Email" />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Nro de Teléfono</label>
-                <input className="w-full border-2 rounded p-2" type="text" placeholder="Nro de Teléfono" />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Notificación</label>
-                <div className="flex items-center">
-                  {/* <Swiitch></Swiitch>  <input type="checkbox" className="mr-2" /> */}
-                  {/* <span>Habilitar Mensajería</span> */}
-                </div>
-              </div>
-              <Button className="w-full bg-orange-500 text-white rounded hover:bg-orange-700">
-                Guardar
-              </Button>
-            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 bg-white shadow-md rounded-lg p-6 w-full">
+                <h3 className="text-xl font-bold mb-4">Datos Adicionales</h3>
+                <FormField
+                  control={form.control}
+                  name="cargo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cargo</FormLabel>
+                      <FormControl>
+                        <Input className="rounded-xl" placeholder="Cargo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="direccion"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dirección</FormLabel>
+                      <FormControl>
+                        <Input className="rounded-xl" placeholder="Dirección" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input className="rounded-xl" placeholder="Email" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="telefono"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nro de Teléfono</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="rounded-xl"
+                          placeholder="Nro de Teléfono"
+                          {...field}
+                          inputMode="numeric"        // Sugiere teclado numérico en dispositivos móviles
+                          pattern="[0-9]*"           // Acepta solo caracteres numéricos
+                          onChange={(e) => {
+                            const numericValue = e.target.value.replace(/\D/g, ''); // Filtra solo números
+                            field.onChange(numericValue);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="notificacion"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center ">
+                      <FormLabel className="mr-2 mt-2">Notificación</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value} // Asigna el valor inicial
+                          onCheckedChange={field.onChange} // Usa onCheckedChange en lugar de onChange
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  disabled={!isChanged || !isDirty}
+                  type="submit"
+                  className="w-full bg-orange-500 text-white rounded hover:bg-orange-700"
+                >
+                  Guardar
+                </Button>
+              </form>
+            </Form>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ interface IAdditionalInfo {
     notificationTime: string;
     address: string;
     jobTitle: string;
+    email: string;
   }
 interface IUser {
     username: string;
@@ -31,7 +32,7 @@ const UserSchema = new Schema<IUser>({
     password: { type: String, required: true },
     confirmpassword: { type: String, required: true },
     profilePicture: { type: String, default: '' }, // Almacena la imagen en formato base64
-    notificationsEnabled: { type: Boolean, default: true },
+    notificationsEnabled: { type: Boolean },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     loginAttempts: { type: Number, required: true, default: 0 },
     lockUntil: { type: Number },
@@ -44,7 +45,7 @@ const UserSchema = new Schema<IUser>({
     phoneNumber: { type: String },
     notificationTime: { type: String }, // Formato: "09:00" para las horas
     address: { type: String },
-    jobTitle: { type: String }
+    jobTitle: { type: String },
   }
 });
 

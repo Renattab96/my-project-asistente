@@ -202,7 +202,7 @@ export const getUserById = async (req: Request, res: Response) => {
   try {
 
        // Excluir los campos 'password', 'confirmpassword' y 'email' con .select('-password -confirmpassword -email')
-    const user = await User.findById(req.params.id).select('-password -confirmpassword -email');
+    const user = await User.findById(req.params.id).select('-password -confirmpassword');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -214,7 +214,7 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const updateAdditionalInfo = async (req: Request, res: Response): Promise<void> => {
-  const { birthDate, phoneNumber, notificationTime, address, jobTitle } = req.body;
+  const { birthDate, phoneNumber, notificationTime, address, jobTitle, notificationsEnabled, email } = req.body;
   
   try {
     const user = await User.findById(req.user);
@@ -225,11 +225,13 @@ export const updateAdditionalInfo = async (req: Request, res: Response): Promise
     }
 
     // Actualizar los campos de datos adicionales
-    if (birthDate) user.additionalInfo.birthDate = birthDate;
-    if (phoneNumber) user.additionalInfo.phoneNumber = phoneNumber;
-    if (notificationTime) user.additionalInfo.notificationTime = notificationTime;
-    if (address) user.additionalInfo.address = address;
-    if (jobTitle) user.additionalInfo.jobTitle = jobTitle;
+    if (birthDate !== undefined) user.additionalInfo.birthDate = birthDate;
+    if (phoneNumber !== undefined) user.additionalInfo.phoneNumber = phoneNumber;
+    if (notificationTime !== undefined) user.additionalInfo.notificationTime = notificationTime;
+    if (address !== undefined) user.additionalInfo.address = address;
+    if (jobTitle !== undefined) user.additionalInfo.jobTitle = jobTitle;
+    if (notificationsEnabled !== undefined) user.notificationsEnabled = notificationsEnabled;
+    if (email !== undefined) user.email = email;
 
     await user.save();
     res.json({ message: 'Additional info updated successfully', user });
