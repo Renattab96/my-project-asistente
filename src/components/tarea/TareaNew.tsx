@@ -221,7 +221,6 @@ const TareaNew: React.FC = () => {
     setProjects(tasks);
     countTasks(tasks);
     dispatch(setId(response._id));
-
   };
 
   // const updateTaskById = (_id: string, updatedTaskData: Partial<Task>) => {

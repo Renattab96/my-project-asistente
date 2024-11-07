@@ -1,22 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Login from "./components/login/Login";
-// import HistoryPage from "@components/historico/HistoryPage";
 import Cuenta from "./components/Cuenta/Cuenta";
-// import Balance from "./components/balance/Balance";
 import Register from "./components/registro/Register";
-// import Task from "./components/tarea/Tarea";
-// Pantalla sin integracion 
 import LoginAdmin from "./components/LoginAdmin/loginAdmin" ;
 import AdminUserTable from "./components/ListaUsuarios/AdminUserTable";
 import DetalleAdmin from "@components/DetalleAdmin/DetalleAdmin";
 import TaskNew from "@components/tarea/TareaNew";
 import BalanceNew from "../src/components/balance/balanceNew";
-import CuentaNew from "@components/Cuenta/CuentaNew";
-import HistoryPageNew from './../src/components/historico/HistoryPageNew'
-
-
-
+import HistoryPage from "@components/historico/HistoryPage";
 
 function App() {
 
@@ -34,7 +26,7 @@ function App() {
         <Route path="/cuenta" element={<Cuenta />} />
 
         {/* Inicio Pantalla sin api   */}
-        <Route path="/historico" element={<HistoryPageNew/>} />
+        <Route path="/historico" element={<HistoryPage/>} />
         <Route path="/tarea" element={<TaskNew/>} />  
         <Route path="/balance" element={<BalanceNew />} />   
         {/* <Route path="/cuenta" element={<CuentaNew />} />  */}

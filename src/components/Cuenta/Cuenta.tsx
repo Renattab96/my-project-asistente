@@ -55,6 +55,7 @@ const Cuenta = () => {
   const [btnLoading, setBtnLoading] = useState<boolean>(false);
   const [btnDeleteLoading, setBtnDeleteLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
   const id = useSelector((state: RootState) => state.userAuth.id)
   const fetchDataUserInfo = async () => {
@@ -105,7 +106,7 @@ const Cuenta = () => {
       try {
         const responsePhoto = await getPhoto(id);
         setProfilePicture(responsePhoto === "" ? null : responsePhoto);
-        setTextButtonChangeImage(responsePhoto === "" ? false : true)
+        setTextButtonChangeImage(responsePhoto === "" ? false : true);
       }
       catch {
         toast.error('Error al cargar la imagen de usuario!', {
@@ -269,7 +270,11 @@ const Cuenta = () => {
   }, [form, initialValues]);
 
   useEffect(() => {
-    if (profilePicture) {
+    if (profilePicture) setInitialLoad(true)
+  }, [profilePicture]);
+
+  useEffect(() => {
+    if (profilePicture && initialLoad) {
       try {
         setBtnLoading(true)
         funtionUpdatePhoto(profilePicture)
@@ -298,7 +303,7 @@ const Cuenta = () => {
                   {btnLoading ?
                     <Loader2 className="animate-spin" />
                     : <img
-                      className="w-full rounded-full h-96"
+                      className="w-96 rounded-full h-96"
                       src={profilePicture ? profilePicture : userIcon}
                       alt="Avatar"
                     />}
@@ -319,6 +324,9 @@ const Cuenta = () => {
                   </p>
                   <p>
                     <strong>Cargo:</strong> {user ? user.additionalInfo.jobTitle || 'No disponible' : 'Cargando...'}
+                  </p>
+                  <p>
+                    <strong>Dirección:</strong> {user ? user.additionalInfo.address || 'No disponible' : 'Cargando...'}
                   </p>
                 </div>
                 <div className="flex gap-4">
