@@ -10,7 +10,7 @@ import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from 'src/services/login.services';
 import { useDispatch } from 'react-redux';
-import { setToken } from 'src/redux/states/auth.state';
+import { setRole, setToken } from 'src/redux/states/auth.state';
 // import { Alert, AlertDescription, AlertTitle } from "../../../@/components/ui/alert"
 
 const Login: React.FC = () => {
@@ -25,8 +25,10 @@ const Login: React.FC = () => {
     try {
       const response = await login(email, password);
       dispatch(setToken(response.token));
+      dispatch(setRole(response.role));
       // Redireccionar al usuario a la página principal o al dashboard
-      navigate('/tarea');
+      if(response.role === "admin") navigate('/support/gestion')
+      else navigate('/tarea');
 
       // Mostrar un mensaje de éxito
       toast.success('Inicio de sesión exitoso!', {

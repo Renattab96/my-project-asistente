@@ -5,7 +5,6 @@ import Cuenta from "./components/Cuenta/Cuenta";
 import Register from "./components/registro/Register";
 import LoginAdmin from "./components/LoginAdmin/loginAdmin" ;
 import AdminUserTable from "./components/ListaUsuarios/AdminUserTable";
-import DetalleAdmin from "@components/DetalleAdmin/DetalleAdmin";
 import TaskNew from "@components/tarea/TareaNew";
 import BalanceNew from "../src/components/balance/balanceNew";
 import HistoryPage from "@components/historico/HistoryPage";
@@ -32,7 +31,7 @@ function App() {
         {/* <Route path="/cuenta" element={<CuentaNew />} />  */}
         <Route path='/support' element={<LoginAdmin />} />  
         <Route path='/support/gestion' element={< AdminUserTable />} />   
-        <Route path="/support/user_data/:id" element={<DetalleAdmin />} />
+        <Route path="/support/user_data" element={<Cuenta />} />
         {/*Fin de Pantalla sin api  */}
 
       </Routes>

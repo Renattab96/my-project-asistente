@@ -21,6 +21,7 @@ import { updatePhoto } from "./services/updatePhoto.services";
 import { Loader2 } from "lucide-react"
 import { deletePhoto } from "./services/deletePhoto";
 import { DialogChangePassword } from "@components/Cuenta/DialogChangePassword";
+import NavbarAdmin from "@components/NavbarAdmin/NavbarAdmin";
 
 const formSchema = z.object({
   cargo: z.string()
@@ -57,7 +58,8 @@ const Cuenta = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
-  const id = useSelector((state: RootState) => state.userAuth.id)
+  const id = useSelector((state: RootState) => state.userAuth.id);
+  const role = useSelector((state: RootState) => state.auth.role);
   const fetchDataUserInfo = async () => {
     if (!id) {
       toast.error('Error al cargar los datos del usuario!', {
@@ -157,10 +159,10 @@ const Cuenta = () => {
 
   const resetForm = (response: User) => {
     form.reset({
-      cargo: response.additionalInfo.jobTitle || "",
-      direccion: response.additionalInfo.address || "",
+      cargo: response.additionalInfo?.jobTitle || "",
+      direccion: response.additionalInfo?.address || "",
       email: response.email || "",
-      telefono: response.additionalInfo.phoneNumber || "",
+      telefono: response.additionalInfo?.phoneNumber || "",
       notificacion: response.notificationsEnabled || false,
     });
   };
@@ -288,7 +290,10 @@ const Cuenta = () => {
 
   return (
     <>
-      <Navbar />
+     {role === "admin" ?
+     <NavbarAdmin />
+     :
+     <Navbar />}
       <div className="container mx-auto my-10 p-5">
         <h1 className="text-3xl font-bold mb-6 border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">
           Datos de la Cuenta
@@ -316,18 +321,19 @@ const Cuenta = () => {
                   <p>
                     <strong>Apellido:</strong> {user ? user.lastname : 'Cargando...'}
                   </p>
-                  <p>
-                    <strong>Nro. Teléfono:</strong> {user ? user.additionalInfo.phoneNumber || 'No disponible' : 'Cargando...'}
-                  </p>
+                 {(user && user.additionalInfo?.phoneNumber) ? <p>
+                    <strong>Nro. Teléfono:</strong> {(user && user.additionalInfo?.phoneNumber) ? user.additionalInfo.phoneNumber  : 'Cargando...'}
+                  </p> : null}
                   <p>
                     <strong>Correo Electrónico:</strong> {user ? user.email : 'Cargando...'}
                   </p>
-                  <p>
-                    <strong>Cargo:</strong> {user ? user.additionalInfo.jobTitle || 'No disponible' : 'Cargando...'}
-                  </p>
-                  <p>
-                    <strong>Dirección:</strong> {user ? user.additionalInfo.address || 'No disponible' : 'Cargando...'}
-                  </p>
+                 {(user && user.additionalInfo?.jobTitle) ? <p>
+                    <strong>Cargo:</strong> {(user && user.additionalInfo?.jobTitle) ? user.additionalInfo.jobTitle : 'Cargando...'}
+                  </p> : null}
+                 {(user && user.additionalInfo?.address) ? <p>
+                    <strong>Dirección:</strong> {(user && user.additionalInfo?.address) ? user.additionalInfo.address : 'Cargando...'}
+                  </p> : null
+                  }
                 </div>
                 <div className="flex gap-4">
                   <input
@@ -366,7 +372,7 @@ const Cuenta = () => {
               </div>
             </div>
           </div>
-          <div className="w-1/2 px-2">
+          {role == "admin" && <div className="w-1/2 px-2">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 bg-white shadow-md rounded-lg p-6 w-full">
                 <h3 className="text-xl font-bold mb-4">Datos Adicionales</h3>
@@ -468,7 +474,7 @@ const Cuenta = () => {
                 </Button>
               </form>
             </Form>
-          </div>
+          </div>}
         </div>
       </div>
       <ToastContainer />

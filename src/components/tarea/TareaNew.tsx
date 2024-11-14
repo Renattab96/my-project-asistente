@@ -8,7 +8,7 @@ import { getTasks } from './services/getTasks.services';
 import { mapApiResponseToTask, mapTaskToResponseToTask } from './models/mappersTask';
 import { Task } from './models/task';
 import { TaskStatus } from 'src/models/tasksStatus.model';
-import { TaskCount } from './models/taskCount';
+import { TaskPercentage } from './models/taskCount';
 import { toast, ToastContainer } from 'react-toastify';
 import { createTask } from './services/createTask.services';
 import { TaskCreate } from './models/taskCreate';
@@ -136,12 +136,12 @@ const TareaNew: React.FC = () => {
   const [claseTarea, settipotarea] = useState<string>('');
   const [hora, sethora] = useState<string>('');
   const [descripcion, setDescripcion] = useState<string>('');
-  const [count, setCount] = useState<TaskCount>({
-    countPending: 0,
-    countInProgress: 0,
-    countCompleted: 0,
-    countDelayed: 0
-  })
+  const [percentages, setPercentages] = useState<TaskPercentage>({
+    pendingPercentage: "0%",
+    inProgressPercentage: "0%",
+    completedPercentage: "0%",
+    delayedPercentage: "0%",
+  });
 
   const addProyecto = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -185,34 +185,48 @@ const TareaNew: React.FC = () => {
   };
 
   const countTasks = (tasks: Task[]) => {
-    // Reiniciamos los contadores
-    const taskCount = {
-      countPending: 0,
-      countInProgress: 0,
-      countCompleted: 0,
-      countDelayed: 0
-    };
-
+    // Contadores de tareas
+    let countPending = 0;
+    let countInProgress = 0;
+    let countCompleted = 0;
+    let countDelayed = 0;
+  
     tasks.forEach(task => {
-      // Usamos switch para manejar los estados
       switch (task.status) {
         case TaskStatus.Pending:
-          taskCount.countPending++;
+          countPending++;
           break;
         case TaskStatus.InProgress:
-          taskCount.countInProgress++;
+          countInProgress++;
           break;
         case TaskStatus.Completed:
-          taskCount.countCompleted++;
+          countCompleted++;
           break;
       }
-
+  
       if (isTaskDelayed(task)) {
-        taskCount.countDelayed++;
+        countDelayed++;
       }
     });
-
-    setCount(taskCount);
+  
+    // Calculamos el total de tareas excluyendo las retrasadas
+    const totalExcludingDelayed = countPending + countInProgress + countCompleted;
+  
+    if (totalExcludingDelayed > 0) {
+      setPercentages({
+        pendingPercentage: `${((countPending / totalExcludingDelayed) * 100).toFixed(2)}%`,
+        inProgressPercentage: `${((countInProgress / totalExcludingDelayed) * 100).toFixed(2)}%`,
+        completedPercentage: `${((countCompleted / totalExcludingDelayed) * 100).toFixed(2)}%`,
+        delayedPercentage: `${((countDelayed / totalExcludingDelayed) * 100).toFixed(2)}%`, // Opcional
+      });
+    } else {
+      setPercentages({
+        pendingPercentage: "0%",
+        inProgressPercentage: "0%",
+        completedPercentage: "0%",
+        delayedPercentage: "0%",
+      });
+    }
   };
 
   const fetchDataTasks = async () => {
@@ -317,19 +331,19 @@ const TareaNew: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-blue-100 p-2 md:p-4 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-blue-700">Pendientes</h3>
-                  <p className="text-lg md:text-2xl">{count.countPending}</p>
+                  <p className="text-lg md:text-2xl">{percentages.pendingPercentage}</p>
                 </div>
                 <div className="bg-yellow-100 p-2 md:p-4 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-yellow-700">En Curso</h3>
-                  <p className="text-lg md:text-2xl">{count.countInProgress}</p>
+                  <p className="text-lg md:text-2xl">{percentages.inProgressPercentage}</p>
                 </div>
                 <div className="bg-green-100 p-2 md:p-2 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-green-700">Finalizadas</h3>
-                  <p className="text-lg md:text-2xl">{count.countCompleted}</p>
+                  <p className="text-lg md:text-2xl">{percentages.completedPercentage}</p>
                 </div>
                 <div className="bg-red-100 p-2 md:p-2 rounded-lg shadow-md text-center">
                   <h3 className="text-lg md:text-xl font-bold text-red-700">Atrasadas</h3>
-                  <p className="text-lg md:text-2xl">{count.countDelayed}</p>
+                  <p className="text-lg md:text-2xl">{percentages.delayedPercentage}</p>
                 </div>
               </div>
             </div>

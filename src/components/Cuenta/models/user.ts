@@ -4,7 +4,7 @@ export interface User {
     lastname: string;
     email: string;
     notificationsEnabled: boolean;
-    additionalInfo: {
+    additionalInfo?: {
         address: string;
         birthDate: string; // Fecha en formato ISO string
         jobTitle: string;

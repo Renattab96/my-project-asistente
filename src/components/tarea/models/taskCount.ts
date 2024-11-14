@@ -1,6 +1,6 @@
-export interface TaskCount {
-    countPending: number;
-    countInProgress: number;
-    countCompleted: number;
-    countDelayed: number;
+export interface TaskPercentage {
+    pendingPercentage: string;
+    inProgressPercentage: string;
+    completedPercentage: string;
+    delayedPercentage: string;
 }

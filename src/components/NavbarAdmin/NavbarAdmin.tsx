@@ -4,61 +4,61 @@ import { FaSignOutAlt } from 'react-icons/fa';
 import { RiAccountBoxLine } from "react-icons/ri";
 import { MdOutlineHistoryEdu } from "react-icons/md";
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import logo from '../../assets/img/logo-asistente.ico';
+import { DialogLogout } from '@components/ui/custom/DialogLogut';
 
 const NavbarAdmin: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const [open, setOpen] = useState(false);
+
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
-  };
-
-  const notify = () => {
-    toast.info('Funcionalidad en desarrollo', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
   };
 
   const isActive = (path: string) => {
     return location.pathname === path ? 'text-blue-500' : 'text-gray-500';
   };
 
+  const onClose = () => {
+    setOpen(false);
+  }
+
+  const onOpen = () => {
+    setOpen(true);
+  }
+
   return (
     <nav className="bg-white border-b border-gray-200">
+      <DialogLogout open={open} onClose={onClose}/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
-          <img src={logo} className="h-15 w-10 mr-3 " alt="Asistente Logo" /> {/* Agrega tu logo aquí */}
+            <img src={logo} className="h-15 w-10 mr-3 " alt="Asistente Logo" /> {/* Agrega tu logo aquí */}
             <Link to="/" className="text-xl font-bold">ASISTENTE ONLINE</Link>
           </div>
           <div className="hidden md:flex md:space-x-8 md:ml-10">
-            <Link 
+            <Link
               // onClick={notify} 
-              to={'/support/user_data/:id'} 
+              to={'/support/user_data/'}
               className={`${isActive('/support/user_data/:id')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
             >
               <RiAccountBoxLine className="mr-1" /> CUENTA
             </Link>
-            <Link 
-              to={"/support/gestion"} 
+            <Link
+              to={"/support/gestion"}
               className={`${isActive('/support/gestion')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
             >
               <MdOutlineHistoryEdu className="mr-1" /> GESTION
             </Link>
-            <Link 
-              to="/support" 
-              className={`${isActive('/support')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
+            <button
+              onClick={onOpen} // Cambiamos Link por button y llamamos a handleLogout
+              className="hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <FaSignOutAlt className="mr-1" /> CERRAR SESION
-            </Link>
+            </button>
           </div>
           <div className="-mr-2 flex items-center md:hidden">
             <button
@@ -84,25 +84,25 @@ const NavbarAdmin: React.FC = () => {
       </div>
       <div className={`${menuOpen ? 'block' : 'hidden'} md:hidden`} id="mobile-menu">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <Link 
-              // onClick={notify} 
-              to={'/support/user_data/:id'} 
-              className={`${isActive('/support/user_data/:id')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
-            >
-              <RiAccountBoxLine className="mr-1" /> CUENTA
-        </Link>
-          <Link 
-            to={"/support/gestion"} 
+          <Link
+            // onClick={notify} 
+            to={'/support/user_data/'}
+            className={`${isActive('/support/user_data/:id')} hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center`}
+          >
+            <RiAccountBoxLine className="mr-1" /> CUENTA
+          </Link>
+          <Link
+            to={"/support/gestion"}
             className={`${isActive('/support/gestion')} hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center`}
           >
             <MdOutlineHistoryEdu className="mr-1" /> GESTION
           </Link>
-          <Link 
-            to="/support" 
-            className={`${isActive('/support')} hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center`}
+          <button
+            onClick={onOpen} // Cambiamos Link por button y llamamos a handleLogout
+            className="hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center"
           >
             <FaSignOutAlt className="mr-1" /> CERRAR SESION
-          </Link>
+          </button>
         </div>
       </div>
       <ToastContainer />

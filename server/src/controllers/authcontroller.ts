@@ -78,7 +78,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
     res.cookie('token', token, { httpOnly: true });
-    res.json({ token });
+    res.json({ token, role: user.role, id: user.id  });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

@@ -1,42 +1,55 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaSignOutAlt,FaTasks } from 'react-icons/fa';
+import { FaSignOutAlt, FaTasks } from 'react-icons/fa';
 
 import { RiAccountBoxLine } from "react-icons/ri";
 import { MdOutlineHistoryEdu } from "react-icons/md";
 import logo from '../../assets/img/logo-asistente.ico';
+import { DialogLogout } from '@components/ui/custom/DialogLogut';
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const onClose = () => {
+    setOpen(false);
+  }
+
+  const onOpen = () => {
+    setOpen(true);
+  }
+
   return (
     <nav className="bg-white border-b border-gray-200">
+      <DialogLogout open={open} onClose={onClose}/>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
-          <img src={logo} className="h-15 w-10 mr-3 " alt="Asistente Logo" /> {/* Agrega tu logo aquí */}
+            <img src={logo} className="h-15 w-10 mr-3 " alt="Asistente Logo" /> {/* Agrega tu logo aquí */}
             <Link to="/" className="text-xl font-bold">ASISTENTE ONLINE</Link>
           </div>
           <div className="hidden md:flex md:space-x-8 md:ml-10">
-          <Link to={'/cuenta'} className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center">
-          <RiAccountBoxLine className="mr-1" />   CUENTA
-          </Link>
-          <Link to="/historico" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center">
-          <MdOutlineHistoryEdu className="mr-1" /> HISTORICO
-          </Link>
-          {/* <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
+            <Link to={'/cuenta'} className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center">
+              <RiAccountBoxLine className="mr-1" />   CUENTA
+            </Link>
+            <Link to="/historico" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center">
+              <MdOutlineHistoryEdu className="mr-1" /> HISTORICO
+            </Link>
+            {/* <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
             <FaPager className='mr-1'/>GASTOS
           </Link> */}
-          <Link to={'/tarea'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
-          <FaTasks className='mr-1'/>TAREA
-          </Link>
-          <Link to="/" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium flex items-center">
-              <FaSignOutAlt className="mr-1" /> CERRAR SESION
+            <Link to={'/tarea'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
+              <FaTasks className='mr-1' />TAREA
             </Link>
+            <button
+              onClick={onOpen} // Cambiamos Link por button y llamamos a handleLogout
+              className="hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+            >
+              <FaSignOutAlt className="mr-1" /> CERRAR SESION
+            </button>
           </div>
           <div className="-mr-2 flex items-center md:hidden">
             <button
@@ -62,21 +75,24 @@ const Navbar: React.FC = () => {
       </div>
       <div className={`${menuOpen ? 'block' : 'hidden'} md:hidden`} id="mobile-menu">
         <div className="pt-2 pb-3 space-y-1">
-        <Link to={'/cuenta'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
-          <RiAccountBoxLine className="mr-1" />   CUENTA
+          <Link to={'/cuenta'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
+            <RiAccountBoxLine className="mr-1" />   CUENTA
           </Link>
           <Link to="/historico" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
-          <MdOutlineHistoryEdu className="mr-1" /> HISTORICO
+            <MdOutlineHistoryEdu className="mr-1" /> HISTORICO
           </Link>
           {/* <Link to={'/balance'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
             <FaPager className='mr-1'/>GASTOS
           </Link> */}
           <Link to={'/tarea'} className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
-          <FaTasks className='mr-1'/>TAREA
+            <FaTasks className='mr-1' />TAREA
           </Link>
-          <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center">
+          <button
+            onClick={onOpen} // Cambiamos Link por button y llamamos a handleLogout
+            className="hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+          >
             <FaSignOutAlt className="mr-1" /> CERRAR SESION
-          </Link>
+          </button>
         </div>
       </div>
     </nav>
