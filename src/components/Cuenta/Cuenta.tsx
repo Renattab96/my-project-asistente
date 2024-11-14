@@ -372,7 +372,7 @@ const Cuenta = () => {
               </div>
             </div>
           </div>
-          {role == "admin" && <div className="w-1/2 px-2">
+          <div className="w-1/2 px-2">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 bg-white shadow-md rounded-lg p-6 w-full">
                 <h3 className="text-xl font-bold mb-4">Datos Adicionales</h3>
@@ -474,7 +474,7 @@ const Cuenta = () => {
                 </Button>
               </form>
             </Form>
-          </div>}
+          </div>
         </div>
       </div>
       <ToastContainer />
