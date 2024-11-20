@@ -22,7 +22,9 @@ interface IUser {
     deviceToken?: string;
     tasks: Schema.Types.ObjectId[];
     additionalInfo: IAdditionalInfo;
+    status: 'active' | 'inactive'; // Nuevo campo
 }
+
 
 const UserSchema = new Schema<IUser>({
     username: { type: String, required: true },
@@ -45,7 +47,13 @@ const UserSchema = new Schema<IUser>({
     notificationTime: { type: String }, // Formato: "09:00" para las horas
     address: { type: String },
     jobTitle: { type: String }
-  }
+    },
+      // Nuevo campo para el estado del usuario
+  status: {
+    type: String,
+    enum: ['active', 'inactive'], // Valores permitidos
+    default: 'active', // Valor por defecto
+  },
 });
 
 UserSchema.virtual('isLocked').get(function () {
