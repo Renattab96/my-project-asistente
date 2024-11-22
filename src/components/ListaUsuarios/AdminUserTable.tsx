@@ -44,10 +44,17 @@ const AdminUserTable: React.FC = () => {
 
   const parsetRole = (role: string) => role === "admin" ? 'Administrador' : 'Usuario';
 
-  const formatDate = (date: Date | undefined): string => {
-    if (!date) return "";  // Verifica si el valor es undefined o null
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-  };
+  const formatDate = (date: Date | string | undefined): string => {
+    if (!date) return ""; // Verifica si es undefined o null
+    const parsedDate = typeof date === "string" ? new Date(date) : date;
+
+    if (isNaN(parsedDate.getTime())) {
+        console.error("Fecha inválida:", date);
+        return "";
+    }
+
+    return `${String(parsedDate.getDate()).padStart(2, '0')}/${String(parsedDate.getMonth() + 1).padStart(2, '0')}/${parsedDate.getFullYear()}`;
+};
 
   const onClosePass = () => {
     setOpenPass(false);
