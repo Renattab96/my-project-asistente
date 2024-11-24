@@ -15,14 +15,14 @@ const transporter = nodemailer.createTransport({
 });
 
 // Función genérica para enviar correos
-export const sendEmail = async (to: string, subject: string, text: string) => {
+export const sendEmail = async (to: string, undefined: undefined, subject: string, text: string) => {
   try {
     await transporter.sendMail({
       from: `"Asistente Web" <${process.env.SMTP_USER}>`, // Dirección del remitente
       to,
       subject,
       text,
-      // html, // Opcional
+      // html, // OpcionalS
     });
     console.log(`Correo enviado a: ${to}`);
   } catch (error) {
