@@ -5,6 +5,7 @@ import { AuthenticatedRequest } from "../middleware/AuthenticatedRequest"; // Im
 import { Types } from "mongoose";
 import { sendEmail } from "../service/emailService";
 
+
 // Crear nueva tarea
 export const createTask = async (
   req: AuthenticatedRequest,
@@ -38,6 +39,17 @@ export const createTask = async (
     // **Enviar correo de notificación al usuario**
     const user = await User.findById(userId); // Obtener los datos del usuario
     if (user && user.email) {
+
+      const formattedStartDate = new Date(startDate).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      const formattedEndDate = new Date(endDate).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
       await sendEmail(
         user.email, // Dirección de correo del usuario
         undefined, // Asunto del correo
@@ -49,8 +61,8 @@ export const createTask = async (
       
       - Título: ${newTask.title}
       - Descripción: ${newTask.description}
-      - Fecha de inicio: ${newTask.startDate}
-      - Fecha de finalización: ${newTask.endDate}
+      - Fecha de inicio: ${formattedStartDate}
+      - Fecha de finalización: ${formattedEndDate}
       - Hora de notificación: ${newTask.notificationTime}
       
       Recuerda completar tu tarea a tiempo.
@@ -90,6 +102,16 @@ export const modifyTask = async (
     const user = await User.findById(task.user).select("email username");
     if (user && user.email) {
       try {
+        const formattedStartDate = new Date(task.startDate).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+        const formattedEndDate = new Date(task.endDate).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
         await sendEmail(
           user.email,
           undefined,
@@ -97,12 +119,11 @@ export const modifyTask = async (
           `
         Hola ${user.username},
         
-        La tarea "${
-          task.title
-        }" ha sido actualizada con los siguientes detalles:
+        La tarea "${task.title}" ha sido actualizada con los siguientes detalles:
         
         - Nueva descripción: ${updates.description || "Sin cambios"}
-        - Nueva fecha de finalización: ${updates.endDate || "Sin cambios"}
+         - Nueva fecha de inicio: ${formattedStartDate}
+         - Nueva fecha de finalización: ${formattedEndDate}
         
         Recuerda verificar los cambios.
         
@@ -199,6 +220,12 @@ export const archiveTask = async (req: Request, res: Response) => {
     }
     // Enviar correo de notificación
     try {
+      const formattedArchiveDate = new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      
       await sendEmail(
         user.email,
         undefined,
@@ -206,7 +233,7 @@ export const archiveTask = async (req: Request, res: Response) => {
                 `
         Hola ${user.username},
 
-        La tarea "${updatedTask.title}" ha sido archivada el ${new Date().toLocaleDateString()}.
+        La tarea "${updatedTask.title}" ha sido archivada el ${formattedArchiveDate}.
 
         Saludos,
         El equipo de gestión de tareas.
