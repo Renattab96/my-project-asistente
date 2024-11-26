@@ -24,12 +24,13 @@ const AdminUserTable: React.FC = () => {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [findId, setFindId] = useState<string>('');
   const [findName, setFindName] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
     let response = await getManaggeUser();
-    if(findName) response = response.filter((item) => (item.username + " " + item.lastname).toLowerCase().includes(findName.toLowerCase()))
-    if(findId) response = response.filter((item) => item._id.includes(findId) )
-    setUsers(response)
+    if (findName) response = response.filter((item) => (item.username + " " + item.lastname).toLowerCase().includes(findName.toLowerCase()))
+    if (findId) response = response.filter((item) => item._id.includes(findId))
+    setUsers(response);
   }
 
   const initializateData = async () => {
@@ -40,6 +41,7 @@ const AdminUserTable: React.FC = () => {
   useEffect(() => {
     fetchData();
     initializateData();
+    setLoading(false);
   }, []);
 
   const parsetRole = (role: string) => role === "admin" ? 'Administrador' : 'Usuario';
@@ -49,12 +51,12 @@ const AdminUserTable: React.FC = () => {
     const parsedDate = typeof date === "string" ? new Date(date) : date;
 
     if (isNaN(parsedDate.getTime())) {
-        console.error("Fecha inválida:", date);
-        return "";
+      console.error("Fecha inválida:", date);
+      return "";
     }
 
     return `${String(parsedDate.getDate()).padStart(2, '0')}/${String(parsedDate.getMonth() + 1).padStart(2, '0')}/${parsedDate.getFullYear()}`;
-};
+  };
 
   const onClosePass = () => {
     setOpenPass(false);
@@ -136,7 +138,7 @@ const AdminUserTable: React.FC = () => {
                 <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
-            <tbody>
+            {(!loading && users.length == 0) && <tbody>
               {users.map((user) => (
                 <tr key={user._id}>
                   <td className="px-6 py-4 whitespace-nowrap">{`${user.username ?? ""} ${user.lastname ?? ""} `}</td>
@@ -163,7 +165,19 @@ const AdminUserTable: React.FC = () => {
                   </td>
                 </tr>
               ))}
-            </tbody>
+            </tbody>}
+            {(!loading && users.length > 0) && (
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={7} // Número total de columnas en el <thead>
+                    className="text-center font-semibold text-2xl text-blue-400 py-4 h-32 bg-slate-200"
+                  >
+                    No se han encontrado usuarios.
+                  </td>
+                </tr>
+              </tbody>
+            )}
           </table>
         </div>
       </div>

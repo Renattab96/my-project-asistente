@@ -27,7 +27,7 @@ const BtnTareaProgress: React.FC<BtnTareaProgressProps> = ({ projectId, Update }
   return (
     <div>
       <br />
-      <button className='btn-progress bg-green-400 border-green-900 rounded-[10px] px-2 py-1 text-white' onClick={statusUpdate}>
+      <button className='btn-progress bg-green-400 border-green-900 rounded-[10px] px-2 py-2 text-white h-7 flex items-center' onClick={statusUpdate}>
         Iniciar
       </button>
     </div>

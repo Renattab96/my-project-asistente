@@ -14,6 +14,8 @@ import { createTask } from './services/createTask.services';
 import { TaskCreate } from './models/taskCreate';
 import { useDispatch } from 'react-redux';
 import { setId } from 'src/redux/states/user.state';
+import BtnTareaPendiente from './BtnTareaPendiente';
+import BtnTareaEditar from './BtnTareaEditar';
 
 const TareaNew: React.FC = () => {
   // const [projects, setProjects] = useState<Task[]>([
@@ -127,8 +129,8 @@ const TareaNew: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const [projects, setProjects] = useState<Task[]>([])
-
+  const [projects, setProjects] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [accion, setAccion] = useState<string>('');
   // const [status, setStatus] = useState<string>('');
   const [fechainicio, setinicio] = useState<string>("");
@@ -190,7 +192,7 @@ const TareaNew: React.FC = () => {
     let countInProgress = 0;
     let countCompleted = 0;
     let countDelayed = 0;
-  
+
     tasks.forEach(task => {
       switch (task.status) {
         case TaskStatus.Pending:
@@ -203,15 +205,15 @@ const TareaNew: React.FC = () => {
           countCompleted++;
           break;
       }
-  
+
       if (isTaskDelayed(task)) {
         countDelayed++;
       }
     });
-  
+
     // Calculamos el total de tareas excluyendo las retrasadas
     const totalExcludingDelayed = countPending + countInProgress + countCompleted;
-  
+
     if (totalExcludingDelayed > 0) {
       setPercentages({
         pendingPercentage: `${((countPending / totalExcludingDelayed) * 100).toFixed(2)}%`,
@@ -230,11 +232,16 @@ const TareaNew: React.FC = () => {
   };
 
   const fetchDataTasks = async () => {
-    const response = await getTasks();
-    const tasks = mapApiResponseToTask(response)
-    setProjects(tasks);
-    countTasks(tasks);
-    dispatch(setId(response._id));
+    try {
+      const response = await getTasks();
+      const tasks = mapApiResponseToTask(response)
+      setProjects(tasks);
+      countTasks(tasks);
+      dispatch(setId(response._id));
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   // const updateTaskById = (_id: string, updatedTaskData: Partial<Task>) => {
@@ -252,106 +259,126 @@ const TareaNew: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col lg:flex-row h-[100vh] bg-white">
+      <div className="flex flex-col 2xl:flex-row h-[100vh] bg-white">
         {/* Sección del tablero de tareas */}
-        {projects && <div className="w-full lg:w-2/3 p-4">
-          <div className="flex flex-col justify-center items-stretch mt-10 m-10">
-            <h1 className="text-3xl font-bold border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600">Tareas</h1>
-            <div className='overflow-auto bg-white shadow-2xl flex flex-col items-center rounded-[20px] mx-auto m-2 p-4 bg-clip-border shadow-3xl dark:!bg-navy-800 dark:text-white dark:!shadow-none'>
-              <div className='dashboard-tab'>
-                <table className='table-fixed w-full text-center'>
-                  <thead className='border-b-4 border-blue-900'>
-                    <tr>
-                      <th scope="col" className='text-2xl text-blue-800'>Pendiente</th>
-                      <th scope="col" className='text-2xl text-blue-800'>En Curso</th>
-                      <th scope="col" className='text-2xl text-blue-800'>Finalizada</th>
-                    </tr>
-                  </thead>
-                  <tbody className='align-top'>
-                    <tr>
-                      <td className='td-css'>
-                        <div className='text-gray-700 grid grid-cols-1 gap-4 p-2 m-2'>
-                          {projects.filter(pro => pro.status === TaskStatus.Pending).map(pro =>
-                            <div key={pro._id} className={`task-card-border ${isTaskDelayed(pro) ? 'border-red-500' : 'border-blue-500'}  border-4 p-2 m-2 rounded-[20px]`}>
-                              <h1 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Recordar: </strong>{pro.accion}</h1>
-                              <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
-                              <h5 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
-                              <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
-                              <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
-                              <div className='flex gap-x-2 justify-center'>
+        {projects &&
+          <div className="w-full 2xl:w-2/3 p-4">
+            <div className="flex flex-col justify-center items-stretch mt-10 m-10">
+              <h1 className="text-3xl font-bold border-blue-900 rounded-md dark:text-gray-300 dark:border-gray-600 text-center">
+                Tareas
+              </h1>
+              <div className="overflow-auto bg-white shadow-2xl flex flex-col items-center rounded-[20px] mx-auto m-2 p-4 bg-clip-border shadow-3xl dark:!bg-navy-800 dark:text-white dark:!shadow-none w-full">
+                <div className="dashboard-tab">
+                  {(!loading && projects.length > 0) &&
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <h2 className="text-2xl text-blue-800 mb-2">Pendiente</h2>
+                        <div className="grid grid-cols-1 gap-4 p-2 m-2">
+                          {projects.filter(pro => pro.status === TaskStatus.Pending).map(pro => (
+                            <div
+                              key={pro._id}
+                              className={`task-card-border ${isTaskDelayed(pro) ? 'border-red-500' : 'border-blue-500'} border-4 p-4 rounded-[20px] min-w-[250px] max-w-[400px]`}
+                            >
+                              <h1 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}>
+                                <strong>Recordar: </strong>{pro.accion}
+                              </h1>
+                              <p><strong>Inicio: </strong>{moment(pro.fechainicio).format('MM-DD-YYYY')}</p>
+                              <p className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}>
+                                <strong>Vencimiento: </strong>{moment(pro.fechavencimiento).format('MM-DD-YYYY')}
+                              </p>
+                              <p><strong>Hora de Notificación: </strong>{moment(pro.hora, 'HH:mm').format('HH:mm')}</p>
+                              <p><strong>Tipo: </strong>{pro.claseTarea}</p>
+                              <p><strong>Más Información: </strong>{pro.descripcion}</p>
+                              <div className="flex gap-x-2 justify-center items-end">
+                                <BtnTareaEditar projectId={pro._id} setProjects={setProjects} projects={projects} />
                                 <BtnTareaProgress projectId={pro._id} Update={fetchDataTasks} />
                                 <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
                               </div>
                             </div>
-                          )}
+                          ))}
                         </div>
-                      </td>
-                      <td className='td-css'>
-                        <div className='grid grid-cols-1 gap-4 p-2 m-2'>
-                          {projects.filter(pro => pro.status === TaskStatus.InProgress).map(pro =>
-                            <div key={pro._id} className={`task-card-border ${isTaskDelayed(pro) ? 'border-red-500' : 'border-blue-500'}  border-4 p-2 m-2 rounded-[20px]`}>
-                              <h1 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Recordar: </strong>{pro.accion}</h1>
-                              <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
-                              <h5 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
-                              <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
-                              <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
-                              <div className='flex gap-x-2 justify-center'>
+                      </div>
+                      <div className="text-center">
+                        <h2 className="text-2xl text-blue-800 mb-2">En Curso</h2>
+                        <div className="grid grid-cols-1 gap-4 p-2 m-2">
+                          {projects.filter(pro => pro.status === TaskStatus.InProgress).map(pro => (
+                            <div
+                              key={pro._id}
+                              className={`task-card-border ${isTaskDelayed(pro) ? 'border-red-500' : 'border-blue-500'} border-4 p-4 rounded-[20px] min-w-[250px] max-w-[400px] mx-auto`}
+                            >
+                              <h1 className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}>
+                                <strong>Recordar: </strong>{pro.accion}
+                              </h1>
+                              <p><strong>Inicio: </strong>{moment(pro.fechainicio).format('MM-DD-YYYY')}</p>
+                              <p className={`${isTaskDelayed(pro) ? 'text-red-500' : ''}`}>
+                                <strong>Vencimiento: </strong>{moment(pro.fechavencimiento).format('MM-DD-YYYY')}
+                              </p>
+                              <p><strong>Hora de Notificación: </strong>{moment(pro.hora, 'HH:mm').format('HH:mm')}</p>
+                              <p><strong>Tipo: </strong>{pro.claseTarea}</p>
+                              <p><strong>Más Información: </strong>{pro.descripcion}</p>
+                              <div className="flex gap-x-2 justify-center">
                                 <BtnTareaCompleta projectId={pro._id} Update={fetchDataTasks} />
                                 <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
                               </div>
                             </div>
-                          )}
+                          ))}
                         </div>
-                      </td>
-                      <td className='td-css'>
-                        <div className='grid grid-cols-1 gap-4 p-2 m-2'>
-                          {projects.filter(pro => pro.status === TaskStatus.Completed).map(pro =>
-                            <div key={pro._id} className='task-card-border text-gray-700 border-blue-500 border-4 p-2 m-2 rounded-[20px]'>
+                      </div>
+                      <div className="text-center">
+                        <h2 className="text-2xl text-blue-800 mb-2">Finalizada</h2>
+                        <div className="grid grid-cols-1 gap-4 p-2 m-2">
+                          {projects.filter(pro => pro.status === TaskStatus.Completed).map(pro => (
+                            <div
+                              key={pro._id}
+                              className="task-card-border text-gray-700 border-blue-500 border-4 p-4 rounded-[20px] min-w-[250px] max-w-[400px] mx-auto"
+                            >
                               <h1><strong>Recordar: </strong>{pro.accion}</h1>
-                              <h5><strong>Inicio: </strong>  {moment(pro.fechainicio).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Vencimiento: </strong>  {moment(pro.fechavencimiento).format('MM-DD-YYYY')}</h5>
-                              <h5><strong>Hora de Notificación: </strong> {moment(pro.hora, 'HH:mm').format('HH:mm')}</h5>
-                              <h5><strong>Tipo: </strong> {pro.claseTarea}</h5>
-                              <h6><strong>Más Información: </strong> {pro.descripcion}</h6>
-                              <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
+                              <p><strong>Inicio: </strong>{moment(pro.fechainicio).format('MM-DD-YYYY')}</p>
+                              <p><strong>Vencimiento: </strong>{moment(pro.fechavencimiento).format('MM-DD-YYYY')}</p>
+                              <p><strong>Hora de Notificación: </strong>{moment(pro.hora, 'HH:mm').format('HH:mm')}</p>
+                              <p><strong>Tipo: </strong>{pro.claseTarea}</p>
+                              <p><strong>Más Información: </strong>{pro.descripcion}</p>
+                              <div className="flex gap-x-2 justify-center">
+                                <BtnTareaEliminada projectId={pro._id} Update={fetchDataTasks} />
+                                <BtnTareaPendiente projectId={pro._id} Update={fetchDataTasks} />
+                              </div>
                             </div>
-                          )}
+                          ))}
                         </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot className='tfoot-btn'></tfoot>
-                </table>
+                      </div>
+                    </div>}
+                  {(!loading && projects.length === 0) && <div className="grid  gap-4 justify-center items-center w-full font-semibold text-2xl h-24 text-blue-400">
+                    No se ha encontrado tareas.
+                  </div>}
+                </div>
               </div>
-            </div>
-            {/* Contador de tareas */}
-            <div className="container mx-auto my-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-100 p-2 md:p-4 rounded-lg shadow-md text-center">
-                  <h3 className="text-lg md:text-xl font-bold text-blue-700">Pendientes</h3>
-                  <p className="text-lg md:text-2xl">{percentages.pendingPercentage}</p>
-                </div>
-                <div className="bg-yellow-100 p-2 md:p-4 rounded-lg shadow-md text-center">
-                  <h3 className="text-lg md:text-xl font-bold text-yellow-700">En Curso</h3>
-                  <p className="text-lg md:text-2xl">{percentages.inProgressPercentage}</p>
-                </div>
-                <div className="bg-green-100 p-2 md:p-2 rounded-lg shadow-md text-center">
-                  <h3 className="text-lg md:text-xl font-bold text-green-700">Finalizadas</h3>
-                  <p className="text-lg md:text-2xl">{percentages.completedPercentage}</p>
-                </div>
-                <div className="bg-red-100 p-2 md:p-2 rounded-lg shadow-md text-center">
-                  <h3 className="text-lg md:text-xl font-bold text-red-700">Atrasadas</h3>
-                  <p className="text-lg md:text-2xl">{percentages.delayedPercentage}</p>
+
+              {/* Contador de tareas */}
+              <div className="container mx-auto my-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-blue-100 p-4 rounded-lg shadow-md text-center">
+                    <h3 className="text-xl font-bold text-blue-700">Pendientes</h3>
+                    <p className="text-2xl">{percentages.pendingPercentage}</p>
+                  </div>
+                  <div className="bg-yellow-100 p-4 rounded-lg shadow-md text-center">
+                    <h3 className="text-xl font-bold text-yellow-700">En Curso</h3>
+                    <p className="text-2xl">{percentages.inProgressPercentage}</p>
+                  </div>
+                  <div className="bg-green-100 p-4 rounded-lg shadow-md text-center">
+                    <h3 className="text-xl font-bold text-green-700">Finalizadas</h3>
+                    <p className="text-2xl">{percentages.completedPercentage}</p>
+                  </div>
+                  <div className="bg-red-100 p-4 rounded-lg shadow-md text-center">
+                    <h3 className="text-xl font-bold text-red-700">Atrasadas</h3>
+                    <p className="text-2xl">{percentages.delayedPercentage}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-          </div>
-        </div>}
+          </div>}
         {/* Sección de carga de datos */}
-        <div className="w-full lg:w-1/3 p-3">
+        <div className="w-full 2xl:w-1/3 p-3">
           <div className="flex flex-col justify-center items-center mt-10">
             <form onSubmit={addProyecto} className="border-0 border-blue-900 shadow-2xl flex flex-col items-center rounded-[20px] p-4 bg-white bg-clip-border shadow-3xl dark:!bg-navy-800 dark:text-white dark:!shadow-none w-full">
               <div className="mt-6 mb-3 flex flex-wrap gap-10 md:!gap-5">

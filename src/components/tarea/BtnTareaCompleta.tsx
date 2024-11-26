@@ -55,7 +55,7 @@ const BtnTareaCompleta: React.FC<BtnTareaCompletaProps> = ({ projectId, Update }
   return (
     <div>
       <br />
-      <button className='btn-progress bg-yellow-400 border-yellow-900 rounded-[10px] px-2 py-1 text-white' onClick={statusUpdate}>
+      <button className='btn-progress bg-yellow-400 border-yellow-900 rounded-[10px] px-2 py-2 text-white h-7 flex items-center' onClick={statusUpdate}>
         Finalizar
       </button>
     </div>

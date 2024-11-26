@@ -52,80 +52,14 @@ type FormValues = z.infer<typeof formSchema>;
 const Cuenta = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
-  const [textButtonChangeImage, setTextButtonChangeImage] = useState<boolean>(false);
+  const [textButtonChangeImage, setTextButtonChangeImage] = useState<string>("Cargar Foto");
   const [btnLoading, setBtnLoading] = useState<boolean>(false);
   const [btnDeleteLoading, setBtnDeleteLoading] = useState<boolean>(false);
+  const [isPhotoChanged, setIsPhotoChanged] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [initialLoad, setInitialLoad] = useState<boolean>(false);
 
   const id = useSelector((state: RootState) => state.userAuth.id);
   const role = useSelector((state: RootState) => state.auth.role);
-  const fetchDataUserInfo = async () => {
-    if (!id) {
-      toast.error('Error al cargar los datos del usuario!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    else {
-      try {
-        const response = await getUserInfo(id);
-        setUser(response);
-        resetForm(response);
-      }
-      catch {
-        toast.error('Error al cargar los datos del usuario!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-    }
-  }
-  const fetchPhoto = async () => {
-    if (!id) {
-      toast.error('Error al cargar la imagen de usuario!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    else {
-      setBtnLoading(true);
-      try {
-        const responsePhoto = await getPhoto(id);
-        setProfilePicture(responsePhoto === "" ? null : responsePhoto);
-        setTextButtonChangeImage(responsePhoto === "" ? false : true);
-      }
-      catch {
-        toast.error('Error al cargar la imagen de usuario!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-      finally {
-        setBtnLoading(false);
-      }
-    }
-  }
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -136,26 +70,42 @@ const Cuenta = () => {
       telefono: "",
       notificacion: false,
     },
-  })
+  });
 
-  const onSubmit = async (data: FormValues) => {
-    const params: UpdateUSer = {
-      email: data.email ?? undefined,
-      jobTitle: data.cargo ?? undefined,
-      address: data.direccion ?? undefined,
-      phoneNumber: data.telefono ?? undefined,
-      notificationsEnabled: data.notificacion ?? undefined
-    }
-    const response = await updateUserInfo(
-      params
-    )
-    setUser(response);
-    resetForm(response);
-  }
-
-  const { isDirty } = useFormState({ control: form.control }); // Detecta cambios
+  const { isDirty } = useFormState({ control: form.control });
   const [isChanged, setIsChanged] = useState(false);
   const initialValues = form.getValues();
+
+  const fetchDataUserInfo = async () => {
+    if (!id) {
+      toast.error("Error al cargar los datos del usuario!");
+    } else {
+      try {
+        const response = await getUserInfo(id);
+        setUser(response);
+        resetForm(response);
+      } catch {
+        toast.error("Error al cargar los datos del usuario!");
+      }
+    }
+  };
+
+  const fetchPhoto = async () => {
+    if (!id) {
+      toast.error("Error al cargar la imagen de usuario!");
+    } else {
+      setBtnLoading(true);
+      try {
+        const responsePhoto = await getPhoto(id);
+        setProfilePicture(responsePhoto === "" ? null : responsePhoto);
+        setTextButtonChangeImage(responsePhoto === "" ? "Cargar Foto" : "Editar Foto");
+      } catch {
+        toast.error("Error al cargar la imagen de usuario!");
+      } finally {
+        setBtnLoading(false);
+      }
+    }
+  };
 
   const resetForm = (response: User) => {
     form.reset({
@@ -173,7 +123,9 @@ const Cuenta = () => {
       try {
         const reader = new FileReader();
         reader.onloadend = () => {
-          setProfilePicture(reader.result as string); // Guarda la imagen en base64 en el estado independiente
+          setProfilePicture(reader.result as string);
+          setTextButtonChangeImage("Guardar Foto");
+          setIsPhotoChanged(true);
         };
         reader.readAsDataURL(file);
       } catch (error) {
@@ -188,76 +140,59 @@ const Cuenta = () => {
     fileInput.click();
   };
 
+  const handleSavePhoto = async () => {
+    if (!profilePicture) return;
+    try {
+      setBtnLoading(true);
+      await updatePhoto(user!._id, profilePicture);
+      toast.success("Foto de perfil actualizada correctamente!");
+      setTextButtonChangeImage("Editar Foto");
+      setIsPhotoChanged(false);
+    } catch (error) {
+      console.error("Error al guardar la foto", error);
+      toast.error("Error al guardar la foto, inténtalo de nuevo.");
+    } finally {
+      setBtnLoading(false);
+    }
+  };
+
   const handleDeletePhoto = async () => {
     if (!id) {
-      toast.error('Error al eliminar la foto de perfil!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    else {
+      toast.error("Error al eliminar la foto de perfil!");
+    } else {
       try {
         setBtnDeleteLoading(true);
-        const responsePhoto = await deletePhoto(id);
-        setProfilePicture(responsePhoto === "" ? null : responsePhoto);
-        setTextButtonChangeImage(false);
-        toast.success('Se ha eliminado correctamente la foto de perfil!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-      catch {
-        toast.error('Error al eliminar la foto de perfil!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
-      finally {
+        await deletePhoto(id);
+        setProfilePicture(null);
+        setTextButtonChangeImage("Cargar Foto");
+        toast.success("Foto de perfil eliminada correctamente!");
+      } catch {
+        toast.error("Error al eliminar la foto de perfil!");
+      } finally {
         setBtnDeleteLoading(false);
       }
     }
-  }
+  };
 
-  const funtionUpdatePhoto = async (profilePicture: string) => {
-    if (user) {
-      await updatePhoto(user._id, profilePicture)
-      toast.success('Se ha actualizado correctamente la foto de perfil!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+  const onSubmit = async (data: FormValues) => {
+    const params: UpdateUSer = {
+      email: data.email ?? undefined,
+      jobTitle: data.cargo ?? undefined,
+      address: data.direccion ?? undefined,
+      phoneNumber: data.telefono ?? undefined,
+      notificationsEnabled: data.notificacion ?? undefined,
+    };
+    try {
+      const response = await updateUserInfo(params);
+      setUser(response);
+      resetForm(response);
+      toast.success("Datos actualizados correctamente!");
+    } catch {
+      toast.error("Error al actualizar los datos!");
     }
   };
 
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const onOpen = () => {
-    setOpen(true);
-  };
-
   useEffect(() => {
-    console.log("id", id)
     fetchDataUserInfo();
     fetchPhoto();
   }, [id]);
@@ -272,23 +207,13 @@ const Cuenta = () => {
     return () => subscription.unsubscribe();
   }, [form, initialValues]);
 
-  useEffect(() => {
-    if (profilePicture) setInitialLoad(true)
-  }, [profilePicture]);
+  const onOpen = () => {
+    setOpen(true)
+  }
 
-  useEffect(() => {
-    if (profilePicture && initialLoad) {
-      try {
-        setBtnLoading(true)
-        funtionUpdatePhoto(profilePicture)
-        setTextButtonChangeImage(true)
-      }
-      finally {
-        setBtnLoading(false)
-      }
-    }
-  }, [profilePicture])
-
+  const onClose = () => {
+    setOpen(false)
+  }
   return (
     <>
      {role === "admin" ?
@@ -302,39 +227,20 @@ const Cuenta = () => {
         <div className="flex -mx-2">
           <div className="w-1/2 px-2">
             <div className="flex flex-col items-center justify-center mx-5 lg:mx-10">
-              <h2 className="text-2xl font-semibold mb-4">Hola, {user ? user.username : 'Cargando...'}</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                Hola, {user ? user.username : "Cargando..."}
+              </h2>
               <div className="bg-white shadow-md rounded-lg p-6 w-full">
                 <div className="flex items-center justify-center mb-6">
-
-                  {btnLoading ?
+                  {btnLoading ? (
                     <Loader2 className="animate-spin" />
-                    : <img
+                  ) : (
+                    <img
                       className="w-96 rounded-full h-96"
                       src={profilePicture ? profilePicture : userIcon}
                       alt="Avatar"
-                    />}
-                </div>
-                <div className="mb-4 text-left">
-                  <h3 className="text-xl font-bold">Datos Personales</h3>
-                  <p>
-                    <strong>Nombre:</strong> {user ? user.username : 'Cargando...'}
-                  </p>
-                  <p>
-                    <strong>Apellido:</strong> {user ? user.lastname : 'Cargando...'}
-                  </p>
-                 {(user && user.additionalInfo?.phoneNumber) ? <p>
-                    <strong>Nro. Teléfono:</strong> {(user && user.additionalInfo?.phoneNumber) ? user.additionalInfo.phoneNumber  : 'Cargando...'}
-                  </p> : null}
-                  <p>
-                    <strong>Correo Electrónico:</strong> {user ? user.email : 'Cargando...'}
-                  </p>
-                 {(user && user.additionalInfo?.jobTitle) ? <p>
-                    <strong>Cargo:</strong> {(user && user.additionalInfo?.jobTitle) ? user.additionalInfo.jobTitle : 'Cargando...'}
-                  </p> : null}
-                 {(user && user.additionalInfo?.address) ? <p>
-                    <strong>Dirección:</strong> {(user && user.additionalInfo?.address) ? user.additionalInfo.address : 'Cargando...'}
-                  </p> : null
-                  }
+                    />
+                  )}
                 </div>
                 <div className="flex gap-4">
                   <input
@@ -346,30 +252,27 @@ const Cuenta = () => {
                   />
                   <Button
                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 mt-4 w-28"
-                    onClick={openFileSelector}
+                    onClick={isPhotoChanged ? handleSavePhoto : openFileSelector}
                   >
-                    {
-                      btnLoading ?
-                        <Loader2 className="animate-spin" />
-                        :
-                        textButtonChangeImage ? "Editar Foto" : profilePicture ? "Guardar Foto" : "Cargar Foto"
-                    }
+                    {btnLoading ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      textButtonChangeImage
+                    )}
                   </Button>
-                  {textButtonChangeImage && profilePicture &&
+                  {textButtonChangeImage === "Editar Foto" && profilePicture && (
                     <Button
                       className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 mt-4 w-28"
                       onClick={handleDeletePhoto}
                     >
-                      {
-                        btnDeleteLoading ?
-                          <Loader2 className="animate-spin" />
-                          :
-                          "Eliminar Foto"
-                      }
+                      {btnDeleteLoading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        "Eliminar Foto"
+                      )}
                     </Button>
-                  }
+                  )}
                 </div>
-
               </div>
             </div>
           </div>

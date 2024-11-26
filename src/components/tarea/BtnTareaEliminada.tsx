@@ -27,7 +27,7 @@ const BtnTareaEliminada: React.FC<BtnTareaEliminadaProps> = ({ projectId, Update
   return (
     <div>
       <br />
-      <button className='btn-remove bg-red-500 border-red-700 px-2 py-1 rounded-[10px] text-white' type="submit" onClick={statusUpdate}>
+      <button className='btn-remove bg-red-500 border-red-700 px-2 py-2 rounded-[10px] text-white h-7 flex items-center' type="submit" onClick={statusUpdate}>
         Eliminar
       </button>
     </div>
