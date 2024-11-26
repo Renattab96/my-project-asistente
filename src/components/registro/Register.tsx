@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link } from "react-router-dom";
 import imgRegister from "../../assets/img/img-register.jpg";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { register } from 'src/services/register.services';
 
@@ -159,7 +159,6 @@ const Register = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

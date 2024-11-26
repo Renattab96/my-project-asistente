@@ -9,7 +9,7 @@ import { mapApiResponseToTask, mapTaskToResponseToTask } from './models/mappersT
 import { Task } from './models/task';
 import { TaskStatus } from 'src/models/tasksStatus.model';
 import { TaskPercentage } from './models/taskCount';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { createTask } from './services/createTask.services';
 import { TaskCreate } from './models/taskCreate';
 import { useDispatch } from 'react-redux';
@@ -408,7 +408,6 @@ const TareaNew: React.FC = () => {
             </form>
           </div>
         </div>
-        <ToastContainer />
       </div>
 
     </>

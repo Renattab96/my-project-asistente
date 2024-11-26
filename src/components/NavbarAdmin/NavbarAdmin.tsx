@@ -4,7 +4,6 @@ import { FaSignOutAlt } from 'react-icons/fa';
 import { RiAccountBoxLine } from "react-icons/ri";
 import { MdOutlineHistoryEdu } from "react-icons/md";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
 import logo from '../../assets/img/logo-asistente.ico';
 import { DialogLogout } from '@components/ui/custom/DialogLogut';
 
@@ -105,7 +104,6 @@ const NavbarAdmin: React.FC = () => {
           </button>
         </div>
       </div>
-      <ToastContainer />
     </nav>
   );
 };

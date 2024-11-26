@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaTrashAlt, FaRedoAlt } from 'react-icons/fa';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NavbarAdmin from '@components/NavbarAdmin/NavbarAdmin';
 import { getManaggeUser } from './services/getManaggeUser.services';
@@ -167,7 +167,6 @@ const AdminUserTable: React.FC = () => {
           </table>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

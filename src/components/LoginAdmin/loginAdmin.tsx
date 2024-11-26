@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const LoginAdmin = () => {
 
@@ -140,7 +140,6 @@ const LoginAdmin = () => {
       <footer className="p-4 bg-white shadow-md text-center">
         <p className="text-sm">Versión 1.2.3 Beta</p>
       </footer>
-      <ToastContainer />
     </div>
   );
 };

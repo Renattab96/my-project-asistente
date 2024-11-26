@@ -6,7 +6,7 @@ import { User } from "./models/user";
 import { useSelector } from "react-redux";
 import { RootState } from "src/redux/store";
 import { getUserInfo } from "./services/getUserInfo.services";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFormState } from "react-hook-form"
 import { z } from "zod"
@@ -257,9 +257,10 @@ const Cuenta = () => {
   };
 
   useEffect(() => {
+    console.log("id", id)
     fetchDataUserInfo();
     fetchPhoto();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const subscription = form.watch((currentValues) => {
@@ -477,7 +478,6 @@ const Cuenta = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
       <DialogChangePassword open={open} onClose={onClose}/>
     </>
   );

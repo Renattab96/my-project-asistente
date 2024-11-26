@@ -6,7 +6,7 @@ import CardHeader from '@components/ui/CardHeader';
 import { Button } from '@components/ui/Button';
 import { Input} from '@components/ui/Input'
 import loginImage from '../../assets/img/img-login.jpg';
-import { toast,ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from 'src/services/login.services';
 import { useDispatch } from 'react-redux';
@@ -130,7 +130,6 @@ const Login: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      <ToastContainer />
     </div>
   );
 };
