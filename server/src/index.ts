@@ -9,7 +9,7 @@ import taskRoutes from './routes/taskRoutes';
 import paymentRoutes from './routes/paymentRoutes';
 import userRoutes from './routes/userRoutes';
 import adminRoutes from './routes/someAdminRoutes';
-
+import '../src/Task/taskNotifier';
 
 // Swagger dependencies
 import swaggerJsDoc from 'swagger-jsdoc';

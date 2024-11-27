@@ -15,10 +15,11 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Usuario ya existe, pruebe con otro correo electronico ' });
   }
   if (password !== confirmpassword) {
-    return res.status(400).json({ message: "Passwords do not match" });
+    return res.status(400).json({ message: "Verificar las contrasenha no coinciden, debe tener mas de 8 caracteres " });
   }
 
   try {
+    console.log("Iniciando el proceso de creación...");
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -33,7 +34,13 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     const user = await newUser.save();
-    res.status(201).json(user);
+    // console.log("Usuario creado:", newUser);
+    
+    res.status(201).json({
+      message: 'Usuario creado exitosamente',
+      user,
+    });
+    // console.log(jsonData);
   } catch (error) {
     console.error('Error en la creacion:', error);
     res.status(500).json({ message: 'Error  al registra ususario ' });
@@ -77,7 +84,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(400).json({ message: "Error en los datos enviados" });
   }
 };
 
@@ -90,10 +97,10 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
       res.status(404).json({ message: 'User not found' });
       return;
     }
-    res.json({ message: 'User deleted successfully' });
+    res.json({ message: 'User Elimindo de manera exitosa' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes , estamos trabjando para mejorar la experiencia, espere unos minutos y vuelva a intentar ' });
   }
 };
 // Cambio de contrasena por el usuario 
@@ -104,7 +111,7 @@ export const changePassword = async (req: Request, res: Response): Promise<void>
   try {
     const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'Disculpen los inconvenientes , estamos trabjando para mejorar la experiencia, espere unos minutos y vuelva a intentar' });
       return;
     }
 
@@ -115,7 +122,7 @@ export const changePassword = async (req: Request, res: Response): Promise<void>
     res.json({ message: 'Password updated successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes , estamos trabjando para mejorar la experiencia, espere unos minutos y vuelva a intentar, Corrobore la conexion de su navagador ' });
   }
 };
 
@@ -139,7 +146,7 @@ export const resetUserPassword = async (req: Request, res: Response): Promise<vo
     res.json({ message: 'Password has been reset' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes ,  espere unos minutos y vuelva a intentar, Corrobore la conexion de su navagador ' });
   }
 };
 
@@ -165,7 +172,7 @@ export const changeUserPassword = async (req: Request, res: Response): Promise<a
     res.json({ message: 'Password changed successfully' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes , espere unos minutos y vuelva a intentar, Corrobore la conexion de su navagador ' });
   }
 };
 export const listAllUsers = async (req: Request, res: Response): Promise<void> => {
@@ -193,7 +200,7 @@ export const updateUserDeviceToken = async (req: Request, res: Response): Promis
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes , espere unos minutos y vuelva a intentar, Corrobore la conexion de su navagador ' });
   }
 };
 
@@ -209,7 +216,7 @@ export const getUserById = async (req: Request, res: Response) => {
     res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes , espere unos minutos y vuelva a intentar, Corrobore la conexion de su navagador ' });
   }
 };
 
@@ -238,7 +245,7 @@ export const updateAdditionalInfo = async (req: Request, res: Response): Promise
     
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Disculpen los inconvenientes , espere unos minutos y vuelva a intentar, Corrobore la conexion de su navagador ' });
   }
 };
 

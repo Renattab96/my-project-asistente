@@ -9,7 +9,8 @@ interface ITask {
     startDate: Date;
     endDate: Date;
     taskType: 'PERSONAL' | 'HOGAR' | 'ADMINISTRATIVA' | 'ACADEMICA' | 'LABORAL';
-    notificationTime: string; // Formato HH:mm
+    notificationTime: { type: String, required: true }, // Formato HH:mm
+    notificationSent: boolean; // Cambiado a booleano simple
 }
 
 const TaskSchema = new Schema<ITask>({
@@ -21,7 +22,8 @@ const TaskSchema = new Schema<ITask>({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     taskType: { type: String, enum: ['PERSONAL', 'HOGAR', 'ADMINISTRATIVA', 'ACADEMICA', 'LABORAL'], required: true },
-    notificationTime: { type: String, required: true} // Agregar el campo de hora de notificación
+    notificationTime: { type: String, required: true }, // Formato HH:mm
+    notificationSent: { type: Boolean, default: false }, // Correctamente definido como Boolean
 });
 
 export default model<ITask>('Task', TaskSchema);

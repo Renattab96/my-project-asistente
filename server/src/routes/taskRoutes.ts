@@ -240,7 +240,7 @@ router.delete('/delete/:taskId', authMiddleware, borrarTask);
  *       500:
  *         description: Error en el servidor
  */
-router.put('/tasks/archive/:taskId', archiveTask);
+router.put('/tasks/archive/:taskId',authMiddleware, archiveTask);
 
 // Ruta para obtener el usuario con sus tareas
 router.get('/user/tasks-autogestion', authMiddleware, getUserWithTasks); 
