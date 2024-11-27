@@ -138,7 +138,7 @@ const AdminUserTable: React.FC = () => {
                 <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
-            {(!loading && users.length == 0) && <tbody>
+            {(!loading && users.length > 0) && <tbody>
               {users.map((user) => (
                 <tr key={user._id}>
                   <td className="px-6 py-4 whitespace-nowrap">{`${user.username ?? ""} ${user.lastname ?? ""} `}</td>
@@ -149,12 +149,12 @@ const AdminUserTable: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{formatDate(user.createdAt)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex space-x-2">
-                      <button
+                      {/* <button
                         className="px-2 py-1 text-sm bg-red-500 text-white rounded-md"
                         onClick={onOpenDelete}
                       >
                         <FaTrashAlt />
-                      </button>
+                      </button> */}
                       <button
                         className="px-2 py-1 text-sm bg-yellow-500 text-white rounded-md"
                         onClick={onOpenPass}
@@ -166,7 +166,7 @@ const AdminUserTable: React.FC = () => {
                 </tr>
               ))}
             </tbody>}
-            {(!loading && users.length > 0) && (
+            {(!loading && users.length === 0) && (
               <tbody>
                 <tr>
                   <td
