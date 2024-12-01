@@ -122,9 +122,9 @@ const Login: React.FC = () => {
               {/* <Link onClick={notify} to="#" className="hover:text-gray-900">
               <p className="text-sm font-normal text-blue-900 mb-8 underline">Cambio de clave</p>
               </Link> */}
-              <Link to="/support" className="hover:text-gray-900">
+              {/* <Link to="/support" className="hover:text-gray-900">
               <p className="text-sm font-normal text-blue-900 mb-8 underline"> Soporte</p>
-              </Link>
+              </Link> */}
             
             </div>
           </CardContent>
