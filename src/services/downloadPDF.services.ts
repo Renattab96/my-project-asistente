@@ -1,6 +1,6 @@
 export const handleDownloadPDF = () => {
     // Ruta relativa al archivo PDF en la carpeta `public`
-    const filePath = "/pdf/info_pdf1.pdf";
+    const filePath = "/pdf/Guia-paso-a-paso.pdf";
 
     // Crear un enlace temporal
     const link = document.createElement("a");
