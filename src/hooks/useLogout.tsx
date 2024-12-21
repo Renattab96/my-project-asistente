@@ -11,6 +11,7 @@ export const useLogout = () => {
     const handleLogout = useCallback(async () => {
         try {
             await logout();
+            navigate('/'); // Redirige al login
             toast.success('¡Ha cerrado sesión!', { 
                 position: "top-right",
                 autoClose: 5000,
@@ -20,7 +21,6 @@ export const useLogout = () => {
                 draggable: true,
                 progress: undefined,
             });
-            navigate('/'); // Redirige al login
         } catch (error) {
             console.error('Error en el logout:', error);
             toast.error('Error al cerrar sesión', { 

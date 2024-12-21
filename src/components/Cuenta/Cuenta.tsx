@@ -193,6 +193,7 @@ const Cuenta = () => {
   };
 
   useEffect(() => {
+    if (!id) return;
     fetchDataUserInfo();
     fetchPhoto();
   }, [id]);
